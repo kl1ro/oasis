@@ -1,0 +1,7 @@
+ToDo list for the AsmFun operating system:
+
+1. Write a bootloader that reads the kernel from a disk and jumps to 32-bit protected mode and 64-bit long mode sequentially.
+
+...
+
+999. Write my own filesystem. Before that moment I use a fat12 filesystem.
