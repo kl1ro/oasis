@@ -3,7 +3,7 @@ ASM=nasm
 SRC_DIR=src
 BUILD_DIR=build
 
-.PHONY: all floppy_image kernel bootloader clean always
+.PHONY: all floppy_image kernel bootloader iso clean always
 
 #
 # Floppy image
@@ -37,9 +37,11 @@ $(BUILD_DIR)/kernel.bin: always
 #
 always:
 	mkdir -p $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR)/iso
 
 #
 # Clean
 #
 clean:
 	rm -rf $(BUILD_DIR)/*
+	

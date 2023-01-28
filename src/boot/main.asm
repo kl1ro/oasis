@@ -39,23 +39,12 @@ _start:
 
 	; Note: Bios should put drive number to the 
         ; dl register automatically
-        mov [ebr_drive_number], dl
-
-	; Change video mode via bios interruption	
-	mov ah, 00h
-	mov al, 01eh
-	int 10h	
+        mov [ebr_drive_number], dl	
 
 	; Clear screen
 	mov ah, 05h
 	mov al, 01h
 	int 10h
-	
-	; Print os name to the screen
-	mov si, osName
-        call _printText
-        mov bh, 01h
-        call _newLine
 	
 	; Calculating lba adress of the kernel
 	; First of all read fat directory
@@ -178,16 +167,12 @@ _nextClusterAfter:
 	jmp _loadKernelLoop
 
 _readComplete:
-	mov dx, [ebr_drive_number]
-	mov ax, 0x2000
-	mov ds, ax
-	mov es, ax
-	jmp 0x2000:0x0
-	jmp _waitForKeyAndReboot
+	jmp _switchToPM
 
 _kernelNotFound:
 	jmp _waitForKeyAndReboot	
 
+%include "../../Headers16bit/DiskLoadRes/main.asm"
 %include "../../Headers16bit/HaltMachine/main.asm"
 %include "../../Headers16bit/WaitForKeyAndReboot/main.asm"
 %include "../../Headers16bit/LbaToChs/main.asm"
@@ -195,13 +180,20 @@ _kernelNotFound:
 %include "../../Headers16bit/DiskLoad/main.asm"
 %include "../../Headers64bit/Break/main.asm"
 %include "../../Headers16bit/NewLine/main.asm"
+%include "../../Headers16bit/GDT/main.asm"
+%include "../../Headers16bit/SwitchToPM/main.asm"
+%include "../../Headers32bit/PrintText/main.asm"
 	
+bits 32
+_beginPM:
+	mov esi, Kernel.bin 
+	mov edx, 0xb9000
+	call _printTextPM
+	jmp _haltMachine
+
 ; Global variables
-osName db "AsmFun Operating System 64-bit", 0
 Kernel.bin db 'KERNEL  BIN'
 kernelCluster dw 0
-
-%include "../../Headers16bit/DiskLoadRes/main.asm"
 
 times 510-($-$$) db 0			; Pad remainder of boot sector with 0s
 dw 0xaa55				; The standard PC boot signature
