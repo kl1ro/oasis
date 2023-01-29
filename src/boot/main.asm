@@ -11,6 +11,11 @@ _start:
 	mov bp, 0x9000
 	mov sp, bp
 
+	; Set videomode (160x50 Text Mode)
+	mov ah, 00h
+	mov al, 2fh
+	int 10h
+
 	; Clear screen
 	mov ah, 05h
 	mov al, 01h

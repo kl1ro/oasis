@@ -1,4 +1,4 @@
-org 0x1000
+org  0x1000
 bits 32
 
 _start:	
