@@ -1,7 +1,8 @@
 org 0x7c00
 bits 16
 
-_start:
+_start:	
+	; Note: now dl is a current drive number
 	mov ax, 0				; Setup the data segments
 	mov ds, ax
 	mov es, ax
@@ -26,6 +27,7 @@ _start:
         call _printText
 	
 	; Loading kernel from disk
+	; Note: ax is a hardcoded value
 	mov bx, KERNEL_OFFSET
 	mov ax, 15
 	call _diskLoad
@@ -43,7 +45,6 @@ _start:
 	; Entering PM
 	jmp _switchToPM
 	
-%include "../../AsmFun/Headers16bit/HaltMachine/main.asm"
 %include "../../AsmFun/Headers16bit/WaitForKeyAndReboot/main.asm"
 %include "../../AsmFun/Headers16bit/PrintText/main.asm"
 %include "../../AsmFun/Headers16bit/DiskLoad/main.asm"
@@ -51,12 +52,6 @@ _start:
 %include "../../AsmFun/Headers16bit/NewLine/main.asm"
 %include "../../AsmFun/Headers16bit/GDT/main.asm"
 %include "../../AsmFun/Headers16bit/SwitchToPM/main.asm"
-	
-bits 32
-_beginPM:
-	jmp KERNEL_OFFSET
-
-%include "../../AsmFun/Headers32bit/PrintText/main.asm"
 
 ; Defining some usefull constants
 KERNEL_OFFSET equ 0x1000
