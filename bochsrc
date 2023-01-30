@@ -1,0 +1,2 @@
+floppya : 1 _44 = build/main_floppy.img, status = inserted
+boot : a

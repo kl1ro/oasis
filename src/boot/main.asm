@@ -59,7 +59,7 @@ _start:
 %include "../../AsmFun/Headers16bit/SwitchToPM/main.asm"
 
 ; Defining some usefull constants
-KERNEL_OFFSET equ 0x1000
+KERNEL_OFFSET equ 0x500
 
 ; Strings
 osName db "AsmFun Operating System 64-bit version 0.03", 0
