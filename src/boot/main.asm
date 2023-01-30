@@ -5,7 +5,6 @@ _start:
 	; Note: now dl is a current drive number
 	mov ax, 0				; Setup the data segments
 	mov ds, ax
-	mov es, ax
 
 	mov ss, ax				; Setup stack
 	mov bp, 0x9000
@@ -43,13 +42,11 @@ _start:
 	mov bh, 01h
 	call _newLine
 
-	; Printing entering PM
-        mov si, enteringPM
+	; Printing entering LM
+        mov si, enteringLM
         call _printText
-
-	; Entering PM
 	jmp KERNEL_OFFSET
-	
+
 %include "../../AsmFun/Headers16bit/WaitForKeyAndReboot/main.asm"
 %include "../../AsmFun/Headers16bit/PrintText/main.asm"
 %include "../../AsmFun/Headers16bit/DiskLoad/main.asm"
@@ -59,10 +56,10 @@ _start:
 ; Defining some usefull constants
 KERNEL_OFFSET equ 0x500
 ; Strings
-osName db "AsmFun Operating System 64-bit version 0.03", 0
+osName db "AsmFun Operating System 64-bit version 0.04", 0
 kernelLoading db "Loading the kernel... ", 0
 done db "Done!", 0
-enteringPM db "Entering 32-bit Protected Mode... ", 0
+enteringLM db "Entering 64-bit Long Mode... ", 0
 
 times 510-($-$$) db 0			; Pad remainder of boot sector with 0s
 dw 0xaa55				; The standard PC boot signature
