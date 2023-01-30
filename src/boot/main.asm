@@ -5,15 +5,11 @@ _start:
 	; Note: now dl is a current drive number
 	mov ax, 0				; Setup the data segments
 	mov ds, ax
+	mov es, ax	
 
 	mov ss, ax				; Setup stack
 	mov bp, 0x9000
 	mov sp, bp
-
-	; Set videomode (160x50 Text Mode)
-	mov ah, 00h
-	mov al, 2fh
-	int 10h
 
 	; Clear screen
 	mov ah, 05h
@@ -45,7 +41,10 @@ _start:
 	; Printing entering LM
         mov si, enteringLM
         call _printText
-	jmp KERNEL_OFFSET
+
+; Switching to Long Mode
+%include "../../AsmFun/Headers16bit/SwitchToLM/main.asm"
+%include "../../AsmFun/Headers16bit/GDTLM/main.asm"
 
 %include "../../AsmFun/Headers16bit/WaitForKeyAndReboot/main.asm"
 %include "../../AsmFun/Headers16bit/PrintText/main.asm"

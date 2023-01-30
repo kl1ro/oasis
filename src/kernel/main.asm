@@ -1,13 +1,9 @@
 org 0x500
-bits 16
-
-%include "../../AsmFun/Headers16bit/SwitchToLM/main.asm"
-%include "../../AsmFun/Headers16bit/GDTLM/main.asm"
 
 bits 64
 
 _startLM:
-	mov ah, 0x07
+	mov ah, 0x07 		; Gray on black
 	mov rsi, done
 	mov rdx, 0xb917a
 	call _printTextLM
