@@ -58,7 +58,6 @@ _start:
 
 ; Defining some usefull constants
 KERNEL_OFFSET equ 0x500
-
 ; Strings
 osName db "AsmFun Operating System 64-bit version 0.03", 0
 kernelLoading db "Loading the kernel... ", 0
