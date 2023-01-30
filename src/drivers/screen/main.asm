@@ -29,7 +29,9 @@ _printChar:
 	;
 	test ah, ah
 	gz _defaultCharacterStyle
-	
+
+_defaultCharacterStyleAfter:
+
 	;
 	; Then we need to calculate memory
 	; position to put our character to
@@ -49,8 +51,21 @@ _printChar:
 	jl _getCursor
 	cmp cl, 0
 	jl _getCursor
-	jmp _getVideoMemoryOffset
+	call _getVideoMemoryOffset	
+
+_getCursorAfter:
+	;
+	; If we see a newline character , set 
+	; offset to the end of current row , so 
+	; it will be advanced to the first col
+	; of the next row .
+	; 
+	cmp cl, 10
+	je 
+
+_ifNewLineCharacter:
+	
 
 _defaultCharacterStyle:
 	mov ah, 0x07
-	ret
+	jmp _defaultCharacterStyleAfter
