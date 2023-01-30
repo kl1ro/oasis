@@ -48,15 +48,13 @@ _start:
         call _printText
 
 	; Entering PM
-	jmp _switchToPM
+	jmp KERNEL_OFFSET
 	
 %include "../../AsmFun/Headers16bit/WaitForKeyAndReboot/main.asm"
 %include "../../AsmFun/Headers16bit/PrintText/main.asm"
 %include "../../AsmFun/Headers16bit/DiskLoad/main.asm"
 %include "../../AsmFun/Headers64bit/Break/main.asm"
 %include "../../AsmFun/Headers16bit/NewLine/main.asm"
-%include "../../AsmFun/Headers16bit/GDT/main.asm"
-%include "../../AsmFun/Headers16bit/SwitchToPM/main.asm"
 
 ; Defining some usefull constants
 KERNEL_OFFSET equ 0x500
@@ -69,3 +67,4 @@ enteringPM db "Entering 32-bit Protected Mode... ", 0
 
 times 510-($-$$) db 0			; Pad remainder of boot sector with 0s
 dw 0xaa55				; The standard PC boot signature
+
