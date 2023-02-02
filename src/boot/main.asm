@@ -11,6 +11,15 @@ _start:
 	mov bp, 0x9000
 	mov sp, bp
 
+	;
+	; So dl is a drive number now 
+	; and we have to protect it from 
+	; overwriting. But our function _newLine
+	; modifies it. We use di as a buffer to store dx 
+	; in it.	
+	;
+	mov di, dx	
+
 	; Clear screen
 	mov ah, 05h
 	mov al, 01h
@@ -26,8 +35,12 @@ _start:
         mov si, kernelLoading
         call _printText
 	
+	;
 	; Loading kernel from disk
 	; Note: ax is a hardcoded value
+	; And we need to restore dx cause
+	; it is overwritten by _newLine
+	mov dx, di
 	mov bx, KERNEL_OFFSET
 	mov ax, 15
 	call _diskLoad
@@ -55,7 +68,7 @@ _start:
 ; Defining some usefull constants
 KERNEL_OFFSET equ 0x500
 ; Strings
-osName db "AsmFun Operating System 64-bit version 0.04", 0
+osName db "AsmFun Operating System 64-bit version 0.05", 0
 kernelLoading db "Loading the kernel... ", 0
 done db "Done!", 0
 enteringLM db "Entering 64-bit Long Mode... ", 0
