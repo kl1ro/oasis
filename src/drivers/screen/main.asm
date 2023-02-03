@@ -51,6 +51,7 @@ _defaultCharacterStyleAfter:
 	;
 	; Save ax from being overwritten
 	; si is a buffer
+	;
 	mov si, ax
 	
 	;
@@ -76,7 +77,9 @@ _getCursorAfter:
 	mov bx, ax
         mov ax, si
 
+;
 ; Note: this is the cycle start
+;
 _writeCharacterCycle:
 	;
 	; If we see a newline character, set 
@@ -154,6 +157,7 @@ _newLineCharacterAfter:
 ; Output:
 ;	ax = offset from the video 
 ; 	memory to the character
+;
 _getVideomemoryOffset:
 	xor ax, ax
 	mov al, cl
@@ -263,6 +267,7 @@ _setCursor:
 ; Input: 
 ;	r9 is a pointer to a string
 ;	ah is a style
+;
 _print:
 	mov cl, -1
 	call _printAt
