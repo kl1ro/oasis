@@ -12,6 +12,13 @@ _start:
 	mov sp, bp
 
 	;
+	; Set videomode
+	;	
+	mov ah, 00h
+	mov al, 03h
+	int 10h
+	
+	;
 	; So dl is a drive number now 
 	; and we have to protect it from 
 	; overwriting. But our function _newLine

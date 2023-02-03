@@ -2,6 +2,11 @@
 ; Let's define some constants in order to
 ; simplify our code
 ;
+;
+; And let's make it clear:
+; The screen starts from 0xb8000
+; and ends at 0xb8f9f
+;
 VIDEO_ADDRESS equ 0xb8000
 MAX_ROWS equ 25
 MAX_COLS equ 80
@@ -140,9 +145,12 @@ _newLineCharacterAfter:
 	;	
 	add rbx, 10b
 	inc r9
-	mov rsi, rbx	
+	mov r13, r9
+	call _handleScrolling
+	mov rsi, rbx
 	call _setCursor	
 	mov rbx, rsi
+	mov r9, r13
 	jmp _writeCharacterCycle
 	
 ;
@@ -269,8 +277,81 @@ _setCursor:
 ;	ah is a style
 ;
 _print:
-	mov cl, -1
+	mov ch, -1
 	call _printAt
 	ret
 
+;
+; Another useful but not too complicated
+; function is a _clearScreen that puts
+; \0 character at each position of the 
+; screen
+;
+; Input: 
+; 	nothing
+; Output:
+; 	nothing
+;
+_clearScreen:
+	;
+	; This 64-bit number represents 4
+	; standard style space characters	
+	;
+	mov rax, 0x0720072007200720
+	mov rbx, VIDEO_ADDRESS
+	
+_clearScreenCycle:
+	mov [rbx], rax
+	add rbx, 8
+	cmp rbx, 0xb8Fa0
+	jne _clearScreenCycle
+	xor rbx, rbx
+	call _setCursor
+	ret
 
+;
+; In order to keep our screen from 
+; overflowing we need to handle scrolling
+;
+; Input:
+;	rbx is the cursor offset
+;
+; Note: hardcoded values
+_handleScrolling:
+	;
+	; If the cursor is within the
+	; screen we getting out
+	;
+	cmp rbx, 0xfa0
+	jne _break
+	mov r10, 0xb80a0 	; Which is the second string
+	mov r11, 0xb8000	; i.e. the first string
+	mov r12, 0xa0
+	
+	;
+	; Moving strings one by one
+	; until we reach the last string
+	; 	
+	_handleScrollingCycle:
+		mov r8, r10
+		mov r9, r11
+		mov rcx, r12
+		call _memcpy
+		add r10, r12
+		add r11, r12	
+		cmp r11, 0xb8f00
+		jne _handleScrollingCycle
+	
+	mov r10, 0x0720072007200720
+	
+	; 
+	; Blank the last line by setting all bytes to 0
+	;
+	_handleScrollingBlankLineCycle:
+		mov [r11], r10
+		add r11, 8
+		cmp r11, 0xb8fa0
+		jne _handleScrollingBlankLineCycle
+	
+	sub rbx, r12
+	ret
