@@ -12,16 +12,16 @@ REG_SCREEN_CTRL equ 0x3d4
 REG_SCREEN_DATA equ 0x3d5
 
 ;
-; Prints a char to the screen 
+; Prints a string to the screen 
 ; at the specific row and colomn position
 ;
 ; Input: 
-;	al is a ascii code of the character
+;	r9 is a pointer to the string
 ; 	ah is a style of the character
 ; 	cl is a row position
 ;	ch is a colomn
 ;
-_printChar:
+_printAt:
 	;
 	; If style is black on black
 	; we give it our default style
@@ -34,10 +34,9 @@ _defaultCharacterStyle:
         mov ah, 0x07
 
 _defaultCharacterStyleAfter:
-
 	;
 	; Then we need to calculate memory
-	; position to put our character to
+	; position to put our first character to
 	;
 	; Firstly we check if row and colomn 
 	; are positive. If they're not we 
@@ -46,43 +45,52 @@ _defaultCharacterStyleAfter:
 	; if they are then we need to specify
 	; the offset in memory.
 	;
-	; Note: we need to define that bx is
+	; Note: we need to define that rbx is
 	; an offset from start of the video 
 	; memory
 	;
+	; Save ax from being overwritten
+	; si is a buffer
+	mov si, ax
+	
+	;
+	; Clear rbx
+	;
+	xor rbx, rbx
+
 	cmp ch, 0
-	jl _getCursor
+	jl _ifGetCursor
 	cmp cl, 0
-	jl _getCursor
+	jl _ifGetCursor
 	
-	;
-	; Save ax reg from being overwritten
-	;	
-	mov dx, ax
-	call _getVideoMemoryOffset	
-	mov bx, ax
-	
-	;
-	; And restore it
-	; 
-	mov ax, dx
+	call _getVideomemoryOffset
+	jmp _getCursorAfter	
+
+	_ifGetCursor:
+		call _getCursor
 
 _getCursorAfter:
+	; 
+        ; Restore ax    
+        ;       
+	mov bx, ax
+        mov ax, si
+
+; Note: this is the cycle start
+_writeCharacterCycle:
 	;
 	; If we see a newline character, set 
 	; offset to the end of current row, so 
 	; it will be advanced to the first col
 	; of the next row.
-	; 
-	cmp cl, 10
+	;
+	mov al, [r9]
+	test al, al
+	jz _break
+	cmp al, 10
 	jne _elseNewLineCharacter 
 
-_ifNewLineCharacter:
-	; 
-	; Note: shr 1 (But this is efficient) = div 2
-	;
-	shr bx, 1
-	
+_ifNewLineCharacter:	
 	;
 	; We have to save our ax register
         ; because for some reason div instruction
@@ -91,29 +99,48 @@ _ifNewLineCharacter:
 	;
 	mov si, ax
 	mov ax, bx
-	div MAX_COLS
-	mov cx, ax
-	mov ax, si
-	mov ch, 79
-	jmp _getScreenOffset	
+	mov di, MAX_COLS
+	shl di, 1
+	xor rdx, rdx
+	div di
+	sub rdi, 10b
+	test rdx, rdx	
+	jnz _ifElseNewLineCharacter
+
+	_ifIfNewLineCharacter:
+		add rbx, rdi
+		jmp _ifIfNewLineCharacterAfter
+	
+	_ifElseNewLineCharacter:
+		sub rdi, rdx
+		add rbx, rdi
+	
+	_ifIfNewLineCharacterAfter:
+	;
+        ; Restore ax
+        ;
+        mov ax, si	
+	jmp _newLineCharacterAfter
 
 _elseNewLineCharacter:
 	;
 	; Otherwise we just write the character 
 	; to the video memory at our calculated 
 	; offset
-	; 
-	mov byte [VIDEO_ADDRESS + bx], al
-	mov byte [VIDEO_ADDRESS + bx + 1], ah
-
+	;
+	mov [rbx + VIDEO_ADDRESS], ax
+	
 _newLineCharacterAfter:
 	;
 	; Update the offset to the next character cell, which is
-	; two bytes ahead of the current cell .
+	; two bytes ahead of the current cell.
 	;	
-	add bx, 10b
-	call _handleScrolling
-	jmp _setCursor
+	add rbx, 10b
+	inc r9
+	mov rsi, rbx	
+	call _setCursor	
+	mov rbx, rsi
+	jmp _writeCharacterCycle
 	
 ;
 ; Then we need to specify the functions 
@@ -127,11 +154,13 @@ _newLineCharacterAfter:
 ; Output:
 ;	ax = offset from the video 
 ; 	memory to the character
-_getVideoMemoryOffset:
+_getVideomemoryOffset:
 	xor ax, ax
 	mov al, cl
-	mul al, MAX_COLS
-	add al, ch
+	mov di, MAX_COLS
+	mul di
+	shr cx, 8
+	add ax, cx
 	; i.e. multiplication by two
 	shl ax, 1
 	ret
@@ -154,24 +183,24 @@ _getCursor:
 	; putting the number of that 
 	; register to the device port
 	;
-	mov dx, REG_SCREEN_CTRL	
 	mov al, 14
+	mov dx, REG_SCREEN_CTRL
 	out dx, al
 	
 	;
 	; Then read high byte of the 
 	; cursor offset to the ah register
 	; from the device 
-	;
-	mov dx, REG_SCREEN_DATA	
+	;		
+	mov dx, REG_SCREEN_DATA
 	in al, dx
-	mov al, ah		
+	mov ah, al		
 	
 	;
 	; Then again select internal register	
 	;
-	mov dx, REG_SCREEN_CTRL
 	mov al, 15
+	mov dx, REG_SCREEN_CTRL
 	out dx, al
 
 	;
@@ -186,5 +215,57 @@ _getCursor:
 	; offset by two
 	;
 	shl ax, 1
-	ret	
+	ret
+
+;
+; There're situations in which we
+; need to also set a cursor. So let's
+; implement it
+;
+; Input:
+;	bx is offset
+; Output:
+;	nothing but cursor is set
+;
+_setCursor:
+	;
+	; This is similar to the _getCursor	
+	; but we write to those internal
+	; device registers
+	;
 	
+	;
+	; Prepare address
+	;
+	shr bx, 1
+	
+	mov al, 14
+        mov dx, REG_SCREEN_CTRL
+        out dx, al
+
+        mov al, bh
+        mov dx, REG_SCREEN_DATA
+        out dx, al
+
+        mov al, 15
+        mov dx, REG_SCREEN_CTRL
+        out dx, al
+
+        mov al, bl
+        mov dx, REG_SCREEN_DATA
+        out dx, al	
+        ret
+
+;
+; Usually we need to print a whole string
+; to a position of the cursor on the screen
+;
+; Input: 
+;	r9 is a pointer to a string
+;	ah is a style
+_print:
+	mov cl, -1
+	call _printAt
+	ret
+
+

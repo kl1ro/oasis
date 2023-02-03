@@ -19,16 +19,11 @@ _start:
 	; in it.	
 	;
 	mov di, dx	
-
-	; Clear screen
-	mov ah, 05h
-	mov al, 01h
-	int 10h
 	
 	; Printing osName
 	mov si, osName
 	call _printText
-	mov bh, 01h
+	mov bh, 00h
 	call _newLine
 
 	; Printing about kernel loading
@@ -48,7 +43,7 @@ _start:
 	; Printing about loading success
 	mov si, done
 	call _printText
-	mov bh, 01h
+	mov bh, 00h
 	call _newLine
 
 	; Printing entering LM
