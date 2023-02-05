@@ -60,9 +60,12 @@ _defaultCharacterStyleAfter:
 	mov si, ax
 	
 	;
-	; Clear rbx
+	; Clear rbx because we use entire
+	; register but mov only to a part of
+	; this register and that cause the 
+	; problems for us
 	;
-	xor rbx, rbx
+	xor rbx, rbx	
 
 	cmp ch, 0
 	jl _ifGetCursor
@@ -112,18 +115,9 @@ _ifNewLineCharacter:
 	xor rdx, rdx
 	div di
 	sub rdi, 10b
-	test rdx, rdx	
-	jnz _ifElseNewLineCharacter
-
-	_ifIfNewLineCharacter:
-		add rbx, rdi
-		jmp _ifIfNewLineCharacterAfter
+	sub rdi, rdx
+	add rbx, rdi
 	
-	_ifElseNewLineCharacter:
-		sub rdi, rdx
-		add rbx, rdi
-	
-	_ifIfNewLineCharacterAfter:
 	;
         ; Restore ax
         ;
@@ -354,4 +348,29 @@ _handleScrolling:
 		jne _handleScrollingBlankLineCycle
 	
 	sub rbx, r12
+	ret
+
+;
+; For the keyboard interrupt [ENTER]
+; we need to write a function that 
+; pushes the cursor to the first character of
+; the next line
+;
+; Input:
+;	nothing but rbx must be 0
+;	and rax too
+; Output:
+;	cursor is in the first character
+;	of a new line
+;
+_newLine:
+	call _getCursor
+	mov bx, ax
+	mov di, MAX_COLS
+        shl di, 1
+        xor dx, dx
+        div di
+        sub di, dx
+        add bx, di
+	call _setCursor
 	ret
