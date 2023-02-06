@@ -3,8 +3,8 @@ org 0x500
 bits 64
 
 _startLM:
-	mov r9, done
-	call _print	
+	mov r9, done	
+	call _print
 	jmp _haltMachine
 
 %include "../../AsmFun/Headers64bit/Break/main.asm"

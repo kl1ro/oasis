@@ -139,17 +139,19 @@ _newLineCharacterAfter:
 	;	
 	add rbx, 10b
 	inc r9
-	mov r13, r9
+	mov r10, r9
+	mov si, ax
 	call _handleScrolling
+	mov ax, si
+	mov r9, r10
 	mov rsi, rbx
 	call _setCursor	
 	mov rbx, rsi
-	mov r9, r13
 	jmp _writeCharacterCycle
 	
 ;
 ; Then we need to specify the functions 
-; we already used in _printChar. First
+; we already used in _print. First
 ; let's see how _getVideoMemoryOffset
 ; works.
 ;
@@ -309,6 +311,8 @@ _clearScreenCycle:
 ;
 ; Input:
 ;	rbx is the cursor offset
+; Output:
+;	rax is modified
 ;
 ; Note: hardcoded values
 _handleScrolling:
@@ -317,37 +321,23 @@ _handleScrolling:
 	; screen we getting out
 	;
 	cmp rbx, 0xfa0
-	jne _break
-	mov r10, 0xb80a0 	; Which is the second string
-	mov r11, 0xb8000	; i.e. the first string
-	mov r12, 0xa0
-	
+	jl _break
+
+	mov r8, 0xb80a0 	; Which is the second string
+	mov r9, 0xb8000		; i.e. the first string
+
 	;
-	; Moving strings one by one
-	; until we reach the last string
-	; 	
-	_handleScrollingCycle:
-		mov r8, r10
-		mov r9, r11
-		mov rcx, r12
-		call _memcpy
-		add r10, r12
-		add r11, r12	
-		cmp r11, 0xb8f00
-		jne _handleScrollingCycle
-	
-	mov r10, 0x0720072007200720
-	
-	; 
-	; Blank the last line by setting all bytes to 0
+	; Calculating rcx
 	;
-	_handleScrollingBlankLineCycle:
-		mov [r11], r10
-		add r11, 8
-		cmp r11, 0xb8fa0
-		jne _handleScrollingBlankLineCycle
+	mov rax, MAX_ROWS
+	mov rdi, MAX_COLS	
+	mul edi		
+	shl ax, 1
+	mov rcx, rax
+	call _memcpy
 	
-	sub rbx, r12
+	shl rdi, 1
+	sub rbx, rdi
 	ret
 
 ;
