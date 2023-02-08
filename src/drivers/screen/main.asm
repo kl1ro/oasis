@@ -21,7 +21,7 @@ REG_SCREEN_DATA equ 0x3d5
 ; at the specific row and colomn position
 ;
 ; Input: 
-;	r9 is a pointer to the string
+;	rsi is a pointer to the string
 ; 	ah is a style of the character
 ; 	cl is a row position
 ;	ch is a colomn
@@ -55,9 +55,9 @@ _defaultCharacterStyleAfter:
 	; memory
 	;
 	; Save ax from being overwritten
-	; si is a buffer
+	; r8w is a buffer
 	;
-	mov si, ax
+	mov r8w, ax
 	
 	;
 	; Clear rbx because we use entire
@@ -83,7 +83,7 @@ _getCursorAfter:
         ; Restore ax    
         ;       
 	mov bx, ax
-        mov ax, si
+        mov ax, r8w
 
 ;
 ; Note: this is the cycle start
@@ -95,7 +95,7 @@ _writeCharacterCycle:
 	; it will be advanced to the first col
 	; of the next row.
 	;
-	mov al, [r9]
+	mov al, [rsi]
 	test al, al
 	jz _break
 	cmp al, 10
@@ -105,10 +105,10 @@ _ifNewLineCharacter:
 	;
 	; We have to save our ax register
         ; because for some reason div instruction
-        ; can divide only rax. So si register will
+        ; can divide only rax. So r8w register will
         ; serve as a buffer.
 	;
-	mov si, ax
+	mov r8w, ax
 	mov ax, bx
 	mov di, MAX_COLS
 	shl di, 1
@@ -121,7 +121,7 @@ _ifNewLineCharacter:
 	;
         ; Restore ax
         ;
-        mov ax, si	
+        mov ax, r8w	
 	jmp _newLineCharacterAfter
 
 _elseNewLineCharacter:
@@ -138,15 +138,13 @@ _newLineCharacterAfter:
 	; two bytes ahead of the current cell.
 	;	
 	add rbx, 10b
-	inc r9
-	mov r10, r9
-	mov si, ax
+	inc rsi
+	mov r10w, ax
 	call _handleScrolling
-	mov ax, si
-	mov r9, r10
-	mov rsi, rbx
+	mov ax, r10w
+	mov r8, rbx
 	call _setCursor	
-	mov rbx, rsi
+	mov rbx, r8
 	jmp _writeCharacterCycle
 	
 ;

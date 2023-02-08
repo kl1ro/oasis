@@ -3,12 +3,13 @@ org 0x500
 bits 64
 
 _startLM:
-	mov r9, done	
-	call _print
+	mov rsi, done	
+	call _print	
+	call _program
 	jmp _haltMachine
 
-%include "../../AsmFun/Headers64bit/Break/main.asm"
 %include "../../AsmFun/Headers64bit/HaltMachine/main.asm"
 %include "../../AsmFun/Headers64bit/Memcpy/main.asm"
 %include "src/drivers/screen/main.asm"
-done db "Done!", 0
+%include "../Adder/main.asm"
+done db "Done!", 10, 10, "Here's user program:", 10, 0
