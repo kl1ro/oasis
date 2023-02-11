@@ -1,1 +1,191 @@
 _______________________AsmFunOs_screen_driver_Documentation__________________________
+
+My vision of driver is that driver is a software that gives the system more functions
+to communicate with external devices. So in this driver device is a screen.
+Note: dependency of this driver is only this file:
+	"AsmFunOs/src/drivers/screen/main.asm"
+
+Here's a list of all functions that can be used by system for communicating with the screen:
+
+1. _printAt:
+	Purpose:
+		This function prints a string at the colomn and row on the screen
+
+	Input:
+		- rsi is a pointer to string
+
+		- ah is a style of the characters in a string
+
+		- cl is a row position
+
+		- ch is a colomn position
+
+	Output:
+		- ah remains the same
+	
+		- al equals to 0
+
+		- rbx equals to offset to the 
+		place after the last character 
+		of the string on the screen
+
+		- cx equals to 0
+
+		- dx equals to screen data register port number
+
+		- rsi point to the end of the string
+
+		- rdi is modified
+
+		- r8 equals to rbx
+		
+		- r9 equals to rsi
+
+2. _getVideomemoryOffset
+	Purpose:
+		It calculates the offset in video memory of some row-colomn position on a screen.
+	
+	Input:
+        	- cl = row position
+
+        	- ch = colomn position
+
+	Output:
+		- ax equals to the offset of the
+		character from the video memory
+
+		- di equals to maximum colomns
+		on the screen
+	
+		- cl equals to the colomn position
+		from the video memory
+
+		- dx equals to 0
+
+3. _getCursor
+	Purpose:
+		It gets the position of the cursor from the video card and converts
+		this position into the offset from the start of the video memory.
+
+	Input:
+		- absolutly nothing
+
+	Output:
+		- ax equals to the offset from video memory
+
+		- dx equals to the screen data register port number
+
+4. _setCursor
+	Purpose:
+		It sets the cursor to the screen on some offset from video memory
+
+	Input:
+		- bx is an offset (thus it needs to be even)
+
+	Output:
+		- al equals to low byte of bx
+	
+		- bx equals to offset / 2
+
+		- dx equals to the screen data register port number
+
+5. _print
+	Purpose:
+		This is the simplified _printAt function that gives more convinient
+		way to call that function (I mean you don't have to use cx register
+		if you want just print text on the current cursor position).
+
+	Input:
+		- rsi as a pointer to string
+
+		- ah is characters style
+
+	Output:
+		- ah remains the same
+		
+		- al equals to 0
+
+                - rbx equals to offset to the
+                place after the last character
+                of the string on the screen
+
+                - cx equals to 0
+
+                - dx equals to screen data register port number
+
+                - rsi point to the end of the string
+
+                - rdi is modified
+
+                - r8 equals to rbx
+
+                - r9 equals to rsi
+
+6. _clearScreen
+	Purpose: 
+		this simply clears the screen and sets the cursor position to (0, 0).
+
+	Input:
+		- nothing at all
+
+	Output:
+		- rax is modified
+
+		- rbx equals to 0
+	
+		- dx equals to screen data register port number
+		
+		- rcx equals to 0
+
+7. _handleScrolling
+	Purpose: 
+		if offset is more than 0xfa0 then it puts all strings on the screen backwards by 1
+
+	Input:
+		- rbx as an offset
+	
+	Output:
+		- rax is modified
+	
+		- rbx remains the same if it is not equal to 0xfa0 else it equals 0xf00
+
+		- rcx equals to 0 if rbx = 0xfa0
+
+		- rsi points to the last string on the screen
+
+		- rdi points to the last string + 1 on the screen
+
+8. _newLine
+	Purpose: 
+		Pushes the cursor to the first character of the next line
+
+	Input:
+		- nothing
+
+	Output:
+		- ax is modified
+
+		- bx is modified
+	
+		- dx equals to the screen data register port number
+
+		- di equals to maximum colomns of the screen * 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

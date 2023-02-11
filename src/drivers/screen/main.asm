@@ -21,10 +21,32 @@ REG_SCREEN_DATA equ 0x3d5
 ; at the specific row and colomn position
 ;
 ; Input: 
-;	rsi is a pointer to the string
-; 	ah is a style of the character
-; 	cl is a row position
-;	ch is a colomn
+;	- rsi is a pointer to the string
+;
+; 	- ah is a style of the character
+;
+; 	- cl is a row position
+;
+;	- ch is a colomn
+;
+; Output:
+;       - rax is modified
+;
+;       - rbx equals to offset to the
+;         place after the last character
+;         of the string on the screen
+;
+;       - cx equals to 0
+;
+;       - rdx is modified
+;
+;       - rsi point to the end of the string
+;
+;       - rdi is modified
+;
+;       - r8 is modified
+;
+;	- r9 is modified
 ;
 _printAt:
 	;
@@ -110,12 +132,12 @@ _ifNewLineCharacter:
 	;
 	mov r8w, ax
 	mov ax, bx
-	mov di, MAX_COLS
+	mov rdi, MAX_COLS
 	shl di, 1
-	xor rdx, rdx
+	xor dx, dx
 	div di
 	sub rdi, 10b
-	sub rdi, rdx
+	sub di, dx
 	add rbx, rdi
 	
 	;
@@ -139,9 +161,9 @@ _newLineCharacterAfter:
 	;	
 	add rbx, 10b
 	inc rsi
-	mov r10w, ax
+	mov r9, rsi
 	call _handleScrolling
-	mov ax, r10w
+	mov rsi, r9
 	mov r8, rbx
 	call _setCursor	
 	mov rbx, r8
@@ -154,11 +176,21 @@ _newLineCharacterAfter:
 ; works.
 ;
 ; Input:
-;	cl = row position
-; 	ch = colomn position
+;	- cl = row position
+;
+; 	- ch = colomn position
+;
 ; Output:
-;	ax = offset from the video 
+;	- ax = offset from the video 
 ; 	memory to the character
+;
+;	- di equals to maximum colomns
+; 	on the screen
+;
+;	- cl equals to the colomn position
+;	from the videomemory
+;
+;	- dx equals to 0
 ;
 _getVideomemoryOffset:
 	xor ax, ax
@@ -176,10 +208,12 @@ _getVideomemoryOffset:
 ; Let's implement it too
 ; 
 ; Input:
-; 	nothing at all
+; 	- nothing at all
+;
 ; Output:
-;	ax is an offset of the cursor
-; 	being on the screen right now
+;	- ax equals to the offset from video memory
+;
+;	- dx equals to screen data register port number
 ;
 _getCursor:
 	;
@@ -229,9 +263,14 @@ _getCursor:
 ; implement it
 ;
 ; Input:
-;	bx is offset
+;	- bx is offset (it needs to be even)
+;
 ; Output:
-;	nothing but cursor is set
+;	- al equals to low byte of bx
+;
+;	- bx equals to offset / 2
+;
+;	- dx equals to the screen data register port number
 ;
 _setCursor:
 	;
@@ -266,9 +305,31 @@ _setCursor:
 ; Usually we need to print a whole string
 ; to a position of the cursor on the screen
 ;
-; Input: 
-;	r9 is a pointer to a string
-;	ah is a style
+; Input:
+;	- rsi as a pointer to string
+;
+;	- ah is characters style
+;
+; Output: 
+;	- ah remains the same
+;
+;	- al equals to 0
+;
+;	- rbx equals to offset to the
+;	place after the last character
+;	of the string on the screen
+;
+;	- cx equals to 0
+;
+;	- dx equals to screen data register port number
+;
+;	- rsi point to the end of the string
+;
+;	- rdi is modified
+;
+;	- r8 equals to rbx
+;
+;	- r9 equals to rsi
 ;
 _print:
 	mov ch, -1
@@ -278,13 +339,20 @@ _print:
 ;
 ; Another useful but not too complicated
 ; function is a _clearScreen that puts
-; \0 character at each position of the 
+; space character at each position of the 
 ; screen
 ;
 ; Input: 
-; 	nothing
+; 	- nothing
+;
 ; Output:
-; 	nothing
+;	- rax is modified
+;
+;	- rbx equals to 0
+;
+;	- dx equals to screen data register port number
+;
+;	- rcx equals to 0
 ;
 _clearScreen:
 	;
@@ -293,12 +361,12 @@ _clearScreen:
 	;
 	mov rax, 0x0720072007200720
 	mov rbx, VIDEO_ADDRESS
+	mov rcx, 0x1f4
 	
 _clearScreenCycle:
 	mov [rbx], rax
 	add rbx, 8
-	cmp rbx, 0xb8Fa0
-	jne _clearScreenCycle
+	loop _clearScreenCycle
 	xor rbx, rbx
 	call _setCursor
 	ret
@@ -308,34 +376,36 @@ _clearScreenCycle:
 ; overflowing we need to handle scrolling
 ;
 ; Input:
-;	rbx is the cursor offset
-; Output:
-;	rax is modified
+;	- rbx is the cursor offset
 ;
-; Note: hardcoded values
+; Output:
+;	- rax is modified
+;
+;	- rbx remains the same if it is not equal to 0xfa0 else it equals 0xf00
+;
+;	- rcx equals to 0 if rbx = 0xfa0
+;
+;	- rsi points to the last string on the screen
+;
+;	- rdi points to the last string + 1 on the screen
+;
+; Note: hardcoded values can be used
+; only for this resolution (80 * 25)
+;
 _handleScrolling:
 	;
 	; If the cursor is within the
 	; screen we getting out
 	;
 	cmp rbx, 0xfa0
-	jl _break
+	jne _break
 
-	mov r8, 0xb80a0 	; Which is the second string
-	mov r9, 0xb8000		; i.e. the first string
+	mov rsi, 0xb80a0 		; Which is the second string
+	mov rdi, 0xb8000		; i.e. the first string
+	mov rcx, 0x1f4
+	call _memcpyd
 
-	;
-	; Calculating rcx
-	;
-	mov rax, MAX_ROWS
-	mov rdi, MAX_COLS	
-	mul edi		
-	shl ax, 1
-	mov rcx, rax
-	call _memcpy
-	
-	shl rdi, 1
-	sub rbx, rdi
+	sub rbx, 0xa0
 	ret
 
 ;
@@ -345,11 +415,16 @@ _handleScrolling:
 ; the next line
 ;
 ; Input:
-;	nothing but rbx must be 0
-;	and rax too
+;	- nothing at all
+;
 ; Output:
-;	cursor is in the first character
-;	of a new line
+; 	- ax is modified
+;
+;	- bx is modified
+;
+;	- dx equals to the screen data register port number
+;
+; 	- di equals to maximum colomns of the screen * 2
 ;
 _newLine:
 	call _getCursor

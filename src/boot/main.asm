@@ -29,13 +29,13 @@ _start:
 	
 	; Printing osName
 	mov si, osName
-	call _printText
-	mov bh, 00h
+	call _print
+	xor bh, bh
 	call _newLine
 
 	; Printing about kernel loading
         mov si, kernelLoading
-        call _printText
+        call _print
 	
 	;
 	; Loading kernel from disk
@@ -49,13 +49,15 @@ _start:
 	
 	; Printing about loading success
 	mov si, done
-	call _printText
-	mov bh, 00h
+	call _print
+	xor bh, bh
 	call _newLine
 
 	; Printing entering LM
         mov si, enteringLM
-        call _printText
+        call _print
+	xor bh, bh
+	call _newLine
 
 ; Switching to Long Mode
 %include "../../AsmFun/Headers16bit/SwitchToLM/main.asm"
