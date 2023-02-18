@@ -44,7 +44,7 @@ _start:
 	; it is overwritten by _newLine
 	mov dx, di
 	mov bx, KERNEL_OFFSET
-	mov ax, 15
+	mov ax, 22
 	call _diskLoad
 	
 	; Printing about loading success
