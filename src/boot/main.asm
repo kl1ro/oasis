@@ -70,7 +70,7 @@ _start:
 ; Defining some usefull constants
 KERNEL_OFFSET equ 0x5000
 ; Strings
-osName db "AsmFun Operating System 64-bit version 0.05", 0
+osName db "AsmFun Operating System 64-bit version 0.06", 0
 kernelLoading db "Loading the kernel... ", 0
 done db "Done!", 0
 enteringLM db "Entering 64-bit Long Mode... ", 0

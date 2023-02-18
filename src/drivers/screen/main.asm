@@ -409,10 +409,10 @@ _handleScrolling:
 	ret
 
 ;
-; For the keyboard interrupt [ENTER]
+; For the keyboard interrupt [BACKSPACE]
 ; we need to write a function that 
-; pushes the cursor to the first character of
-; the next line
+; pushes the cursor to the previous character
+; and clears it
 ;
 ; Input:
 ;	- nothing at all
@@ -426,14 +426,41 @@ _handleScrolling:
 ;
 ; 	- di equals to maximum colomns of the screen * 2
 ;
-_newLine:
+_backspace:
+	xor rbx, rbx
+	xor rax, rax
 	call _getCursor
+	xor dx, dx
+	cmp ax, 2
+	jl _break
+
+	sub ax, 2
 	mov bx, ax
-	mov di, MAX_COLS
-        shl di, 1
-        xor dx, dx
-        div di
-        sub di, dx
-        add bx, di
-	call _setCursor
-	ret
+	mov di, MAX_COLS	
+	shl di, 1
+	div di
+	cmp dx, 158
+	je _backspacePrevLineIf
+	
+        _backspacePrevLineElse:
+		mov al, 32	
+		mov [VIDEO_ADDRESS + rbx], al
+		call _setCursor
+		ret
+
+	_backspacePrevLineIf:
+		mov al, [VIDEO_ADDRESS + rbx]
+		cmp al, 32
+		jne _backspacePrevLineElse
+
+		_backspaceCycle:
+			mov al, [VIDEO_ADDRESS + rbx]
+			cmp al, 32
+			jne _backspaceCycleAfter
+			sub bx, 2
+			jmp _backspaceCycle
+
+		_backspaceCycleAfter:
+			add rbx, 2
+			call _setCursor
+			ret
