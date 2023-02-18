@@ -403,7 +403,7 @@ _handleScrolling:
 	mov rsi, 0xb80a0 		; Which is the second string
 	mov rdi, 0xb8000		; i.e. the first string
 	mov rcx, 0x1f4
-	call _memcpyd
+	call _memcpyq
 
 	sub rbx, 0xa0
 	ret

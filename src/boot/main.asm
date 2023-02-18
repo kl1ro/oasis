@@ -56,8 +56,6 @@ _start:
 	; Printing entering LM
         mov si, enteringLM
         call _print
-	xor bh, bh
-	call _newLine
 
 ; Switching to Long Mode
 %include "../../AsmFun/Headers16bit/SwitchToLM/main.asm"
@@ -70,7 +68,7 @@ _start:
 %include "../../AsmFun/Headers16bit/NewLine/main.asm"
 
 ; Defining some usefull constants
-KERNEL_OFFSET equ 0x500
+KERNEL_OFFSET equ 0x5000
 ; Strings
 osName db "AsmFun Operating System 64-bit version 0.05", 0
 kernelLoading db "Loading the kernel... ", 0
