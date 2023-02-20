@@ -1,7 +1,7 @@
 ToDo list for the AsmFun operating system:
 
-1. Write a bootloader that reads the kernel from a disk and jumps to 32-bit protected mode and 64-bit long mode sequentially.
-2. Write drivers for diskdrive, screen, keyboard, flashdrives.
+1. Write a bootloader that reads the kernel from a disk and jumps to 64-bit protected mode. Done!
+2. Write drivers for diskdrive, screen, keyboard, flashdrives. 1/2done...
 3. Write a filesystem (firstly, that will be fat).
 4. Write a console.
 
