@@ -2,10 +2,35 @@ org 0x5000
 bits 64
 
 _startLM:
+	;
+	; Printing about switching 
+	; to 64-bit success		
+	;
 	mov rsi, done
 	call _print
-	call _loadIDT
-	jmp _chill
+
+	;
+	; Print loading IDT
+	;
+	mov rsi, loadingIDT
+	call _print
+
+	;
+	; Load IDT
+	; 
+	call _loadIDT	
+
+	;
+	; Print about IDT
+	; load success
+	;
+	mov rsi, done
+	call _print
+
+	;
+	; Wait for commands
+	;
+	jmp _console
 
 ;
 ; Drivers
@@ -17,12 +42,17 @@ _startLM:
 ; AsmFunctions
 ;
 %include "../../AsmFun/Headers64bit/LoadIDT/main.asm"
-%include "../../AsmFun/Headers64bit/HaltMachine/main.asm"
 %include "../../AsmFun/Headers64bit/Memcpyq/main.asm"
 %include "../../AsmFun/Headers64bit/Break/main.asm"
-%include "../../AsmFun/Headers64bit/Chill/main.asm"
+%include "../../AsmFun/Headers64bit/HaltMachine/main.asm"
+
+;
+; Utilities
+;
+%include "src/utilities/console/main.asm"
 
 ;
 ; Variables
 ;
-done db "Done!", 0
+done db "Done!", 10, 0
+loadingIDT db "Loading IDT... ", 0
