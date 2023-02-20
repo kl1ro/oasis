@@ -464,3 +464,161 @@ _backspace:
 			add rbx, 2
 			call _setCursor
 			ret
+
+;
+; This function increments the current
+; cursor position by one.
+; 
+; Input:
+;	- nothing
+;
+; Output:
+;       If it was not the last character of
+;       the string then:
+;
+;               - al equals to low byte of bx
+;
+;               - bx equals to offset / 2
+;
+;               - dx equals to the screen data register port number
+;
+;               - di equals to MAX_COLS * 2
+;
+;       Else:
+;
+;		- ax equals to the cursor offset
+;               
+;               - dx equals to MAX_COLS * 2 - 2
+;
+;               - di equals to MAX_COLS * 2
+;
+;               - bx equals to the cursor offset
+;
+_cursorGoRight:
+	call _getCursor
+        xor dx, dx
+        mov di, 160
+        mov bx, ax
+        div di
+        cmp dx, 158
+	je _break
+        add bx, 2
+        call _setCursor
+        ret
+
+
+;
+; This function decrements the current
+; cursor position by one.
+; 
+; Input:
+;       - nothing
+;
+; Output:
+;	If it was not the first character of
+; 	the string then:
+;
+;      		- al equals to low byte of bx
+;
+;	      	- bx equals to offset / 2
+;
+;       	- dx equals to the screen data register port number
+;
+;		- di equals to MAX_COLS * 2
+;
+;	Else:
+;
+;		- ax equals to the cursor offset
+;				
+;		- dx equals to 0
+;
+;		- di equals to MAX_COLS * 2
+;
+;		- bx equals to the cursor offset
+;
+_cursorGoLeft:
+        call _getCursor
+	xor dx, dx
+	mov di, 160
+	mov bx, ax
+	div di
+	test dx, dx
+	jz _break
+        sub bx, 2
+        call _setCursor
+        ret
+
+;
+; This function puts the cursor up 
+; up by one
+;
+; Input:
+; 	- nothing
+; Output:
+;	If it was not the first string
+;	of the screen then:
+;	       	
+;		- al equals to low byte of bx
+;
+;       	- bx equals to offset / 2
+;
+;     	  	- dx equals to the screen data register port number
+;
+;		- di is equal to MAX_COLS * 2
+;
+;	Else:
+;
+;	       	- ax equals to the offset from video memory
+;
+;       	- dx equals to screen data register port number
+;
+;		- bx is modified
+;
+;               - di is equal to MAX_COLS * 2		
+;
+_cursorGoUp:
+	call _getCursor
+        mov bx, ax
+	mov di, 160
+	sub bx, di
+	test bx, bx
+	jns _setCursor
+	ret
+
+;
+; This function puts the cursor up 
+; up by one
+;
+; Input:
+;       - nothing
+; Output:
+;       If it was not the first string
+;       of the screen then:
+;               
+;               - al equals to low byte of bx
+;
+;               - bx equals to offset / 2
+;
+;               - dx equals to the screen data register port number
+;
+;               - di is equal to MAX_COLS * 2
+;
+;       Else:
+;
+;               - ax equals to the offset from video memory
+;
+;               - dx equals to screen data register port number
+;
+;               - bx is modified
+;
+;               - di is equal to MAX_COLS * 2           
+;
+_cursorGoDown:
+        call _getCursor
+        mov bx, ax
+        mov di, 160
+        add bx, di
+        cmp bx, 4000
+        jl _setCursor
+        ret
+
