@@ -1,0 +1,9 @@
+____________________AsmFunOs__Bootloader__Documentation__________________
+
+My bootloader is very straightforward. Firstly it initializes the stack pointer,
+
+sets the video mode to 80x25, then it loads the kernel and if everything worked
+
+fine and our kernel is successfully loaded it enters the Long Mode (64-bit mode)
+
+and jumps into that kernel.

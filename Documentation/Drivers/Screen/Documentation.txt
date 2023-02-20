@@ -109,7 +109,7 @@ Here's a list of all functions that can be used by system for communicating with
                 place after the last character
                 of the string on the screen
 
-                - cx equals to 0
+                - rcx is modified
 
                 - dx equals to screen data register port number
 
@@ -139,7 +139,7 @@ Here's a list of all functions that can be used by system for communicating with
 
 7. _handleScrolling
 	Purpose: 
-		if offset is more than 0xfa0 then it puts all strings on the screen backwards by 1
+		If offset is more than 0xfa0 then it puts all strings on the screen backwards by 1
 
 	Input:
 		- rbx as an offset
@@ -155,37 +155,33 @@ Here's a list of all functions that can be used by system for communicating with
 
 		- rdi points to the last string + 1 on the screen
 
-8. _newLine
+8. _backspace
 	Purpose: 
-		Pushes the cursor to the first character of the next line
+		It deletes the previous character and sets the cursor to that position
 
 	Input:
 		- nothing
 
 	Output:
-		- ax is modified
+		If the cursor is on the first character of the screen:
+			
+			- rax is modified
 
-		- bx is modified
+			- rbx is modified
+
+			- rcx equals to 0
+
+			- rdx is a number of screen data port
+
+			- rdi equals to maximum cols * 2
+
+		Else if the cursor is on one of the rest of the characters:
+		
+			- rax is modified
 	
-		- dx equals to the screen data register port number
+			- rbx is modified
 
-		- di equals to maximum colomns of the screen * 2
+			- rdx is a number of screen data port
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+			- rdi equals to maximum cols * 2
+		

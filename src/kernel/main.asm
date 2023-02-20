@@ -1,7 +1,7 @@
 org 0x5000
 bits 64
 
-_startLM:
+_startLM:	
 	;
 	; Printing about switching 
 	; to 64-bit success		
@@ -21,12 +21,11 @@ _startLM:
 	call _loadIDT	
 
 	;
-	; Print about IDT
-	; load success
+	; Print about IDT load success
 	;
 	mov rsi, done
 	call _print
-
+	
 	;
 	; Wait for commands
 	;
@@ -45,6 +44,7 @@ _startLM:
 %include "../../AsmFun/Headers64bit/Memcpyq/main.asm"
 %include "../../AsmFun/Headers64bit/Break/main.asm"
 %include "../../AsmFun/Headers64bit/HaltMachine/main.asm"
+%include "../../AsmFun/Headers64bit/Memclrb/main.asm"
 
 ;
 ; Utilities

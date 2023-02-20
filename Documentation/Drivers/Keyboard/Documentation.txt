@@ -1,0 +1,61 @@
+_____________________AsmFunOs__Keyboard__driver__Documentation_________________________
+
+This driver is much different than the screen one, because first of all this driver uses 
+
+a bunch of functions of the screen driver, thus its hard to analyze the output of the
+
+functions of this driver. Secondly this function output depends on the user input.
+
+List of all functions and their outputs:
+
+1. _getKeyboardKey
+	Input:
+		- nothing
+	Output:
+		As I said it depends on user input so:
+		
+		If [SHIFT] is pressed or released:
+			
+			- rax is 1 if pressed and 0 if released
+
+			- dx equals to keyboard data port
+
+		If [Backspace] is pressed:
+			
+			If the cursor is on the first character of the screen:
+
+                        	- rax is modified
+
+                       		- rbx is modified
+
+                        	- rcx equals to 0
+
+                        	- rdx is a number of screen data port
+
+                        	- rdi equals to maximum cols * 2
+
+                	Else if the cursor is on one of the rest of the characters:
+
+                        	- rax is modified
+
+                        	- rbx is modified
+
+                        	- rdx is a number of screen data port
+
+			- rax is modified
+
+			
+			- rbx equals to offset to the
+                	place after the last character
+                	of the string on the screen
+
+			- rcx is modified
+
+			- dx equals to screen data register port number
+
+	                - rsi point to the end of the string
+
+        	        - rdi equals to 0
+
+			- r9 equals to rsi
+

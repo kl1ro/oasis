@@ -430,10 +430,10 @@ _backspace:
 	xor rbx, rbx
 	xor rax, rax
 	call _getCursor
-	xor dx, dx
 	cmp ax, 2
 	jl _break
 
+	xor dx, dx
 	sub ax, 2
 	mov bx, ax
 	mov di, MAX_COLS	

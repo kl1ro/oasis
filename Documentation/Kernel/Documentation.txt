@@ -1,0 +1,22 @@
+__________________AsmFunOs__Kernel__Documentation______________________
+
+
+Well, the kernel is NOT straightforward at all and that is not my fault
+
+and I did not make it so complicated or something. Definately not! That
+
+is so complicated because of _loadIDT function. If you look at it (it lies
+
+in AsmFun project) firstly it's very hard to understand what is really 
+
+happening there and secondly too. So this function loads the idt (Inter-
+
+rupt descriptor table) just to get keyboard and clock and the other de-
+
+vices working correctly. It was horrible to program so let's forget it
+
+cause its done. It works and this is all that we want from it isn't it?
+
+Kernel also loads some device drivers and AsmFunctions and then its just 
+
+jumps to the console.

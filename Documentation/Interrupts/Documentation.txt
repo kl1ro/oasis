@@ -1,0 +1,27 @@
+_________________AsmFunOs__Interrupts__Documentation__________________
+
+The interrupts lie in the src/interrupts folder. So this folder contains
+
+only two folders and let's start with the second one, it's much easier to
+
+comprehend (or not maybe). Well this folder contains all of the entries of
+
+Interrupt Descriptor Table. The _loadIDT well... loads them into the 0x0
+
+memory point and tells the processor that it can access them in order to 
+
+get interrupts running. So that's basically it! Oh... One other thing I
+
+forgot to mention: they are not the complete version of the idt gates. 
+
+_loadIDT function also defines them and it puts the information about 
+
+interrupt service routines memory position into them. These routines
+
+are called if the interrupt is invoked (maybe it's the key press on the
+
+keyboard or one tick of the system clock or heaven forbid the division by 0).
+
+And one other thing is that these routines are stored in the second folder,
+
+which is called interruptServiceRoutines.
