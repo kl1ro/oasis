@@ -1,4 +1,4 @@
-_______________________AsmFunOs_screen_driver_Documentation__________________________
+______________________AsmFunOs_screen_driver_Documentation__________________________
 
 My vision of driver is that driver is a software that gives the system more functions
 to communicate with external devices. So in this driver device is a screen.
@@ -184,4 +184,119 @@ Here's a list of all functions that can be used by system for communicating with
 			- rdx is a number of screen data port
 
 			- rdi equals to maximum cols * 2
-		
+
+9. _cursorGoRight
+	Purpose:
+		This function increments the current cursor position by one.
+
+	Input:
+		- nothing
+
+	Output:
+		If it was not the last character of
+	        the string then:
+
+                - al equals to low byte of bx
+ 
+                - bx equals to offset / 2
+
+                - dx equals to the screen data register port number
+
+                - di equals to MAX_COLS * 2
+ 
+        Else:
+ 
+                - ax equals to the cursor offset
+                
+                - dx equals to MAX_COLS * 2 - 2
+ 
+                - di equals to MAX_COLS * 2
+ 
+                - bx equals to the cursor offset
+
+10. _cursorGoLeft
+	Purpose:
+		This function decrements the current cursor position by one.		
+	
+	Input:
+		- nothing
+
+	Output:
+		If it was not the first character of
+ 	        the string then:
+ 
+                - al equals to low byte of bx
+ 
+                - bx equals to offset / 2
+ 
+                - dx equals to the screen data register port number
+ 
+                - di equals to MAX_COLS * 2
+ 
+        Else:
+ 
+                - ax equals to the cursor offset
+                               
+                - dx equals to 0
+ 
+                - di equals to MAX_COLS * 2
+ 
+                - bx equals to the cursor offset
+
+11. _cursorGoUp
+	Purpose:
+		This function puts the cursor up by one
+
+	Input:
+		- nothing
+
+	Output:
+		If it was not the first string
+		of the screen then:
+
+                - al equals to low byte of bx
+ 
+                - bx equals to offset / 2
+ 
+                - dx equals to the screen data register port number
+ 
+                - di is equal to MAX_COLS * 2
+
+        Else:
+ 
+                - ax equals to the offset from video memory
+ 
+                - dx equals to screen data register port number
+ 
+                - bx is modified
+ 
+                - di is equal to MAX_COLS * 2
+
+12. _cursorGoDown
+	Purpose:
+		This function puts the cursor down by one
+
+	Input:
+		- nothing
+
+	Output:
+		If it was not the last string
+	        of the screen then:
+               
+                - al equals to low byte of bx
+ 
+                - bx equals to offset / 2
+ 
+                - dx equals to the screen data register port number
+ 
+                - di is equal to MAX_COLS * 2
+ 
+        Else:
+ 
+                - ax equals to the offset from video memory
+ 
+                - dx equals to screen data register port number
+ 
+                - bx is modified
+ 
+                - di is equal to MAX_COLS * 2

@@ -549,11 +549,11 @@ _cursorGoLeft:
         ret
 
 ;
-; This function puts the cursor up 
-; up by one
+; This function puts the cursor up by one
 ;
 ; Input:
 ; 	- nothing
+;
 ; Output:
 ;	If it was not the first string
 ;	of the screen then:
@@ -586,13 +586,13 @@ _cursorGoUp:
 	ret
 
 ;
-; This function puts the cursor up 
-; up by one
+; This function puts the cursor down by one
 ;
 ; Input:
 ;       - nothing
+;
 ; Output:
-;       If it was not the first string
+;       If it was not the last string
 ;       of the screen then:
 ;               
 ;               - al equals to low byte of bx

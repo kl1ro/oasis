@@ -17,12 +17,12 @@ _startLM:
 
 	;
 	; Load IDT
-	; 
+	; 	
 	call _loadIDT	
 
 	;
-	; Print about IDT load success
-	;
+	; Print about loading IDT success
+	;	
 	mov rsi, done
 	call _print
 	
@@ -46,6 +46,7 @@ _startLM:
 %include "../../AsmFun/Headers64bit/HaltMachine/main.asm"
 %include "../../AsmFun/Headers64bit/Memclrb/main.asm"
 %include "../../AsmFun/Headers64bit/MinusCheck/main.asm"
+%include "../../AsmFun/Headers64bit/GetDebugString/main.asm"
                         %include "../../AsmFun/Headers64bit/AssignFlippedIntegerPortion/main.asm"
                         %include "../../AsmFun/Headers64bit/FlipString/main.asm"
                         %include "../../AsmFun/Headers64bit/IntToString/main.asm"
@@ -64,3 +65,4 @@ done db "Done!", 10, 0
 loadingIDT db "Loading IDT... ", 0
 
 %include "../../AsmFun/Headers64bit/TempRes/main.asm"
+%include "../../AsmFun/Headers64bit/GetDebugStringRes/main.asm"
