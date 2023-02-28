@@ -199,6 +199,7 @@ _getVideomemoryOffset:
 	mul di
 	shr cx, 8
 	add ax, cx
+
 	; i.e. multiplication by two
 	shl ax, 1
 	ret

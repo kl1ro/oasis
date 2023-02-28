@@ -25,7 +25,7 @@ _startLM:
 	;	
 	mov rsi, done
 	call _print
-	
+
 	;
 	; Wait for commands
 	;
@@ -45,13 +45,6 @@ _startLM:
 %include "../../AsmFun/Headers64bit/Break/main.asm"
 %include "../../AsmFun/Headers64bit/HaltMachine/main.asm"
 %include "../../AsmFun/Headers64bit/Memclrb/main.asm"
-%include "../../AsmFun/Headers64bit/MinusCheck/main.asm"
-%include "../../AsmFun/Headers64bit/GetDebugString/main.asm"
-                        %include "../../AsmFun/Headers64bit/AssignFlippedIntegerPortion/main.asm"
-                        %include "../../AsmFun/Headers64bit/FlipString/main.asm"
-                        %include "../../AsmFun/Headers64bit/IntToString/main.asm"
-                        %include "../../AsmFun/Headers64bit/Negate/main.asm"
-                        %include "../../AsmFun/Headers64bit/AddMinus/main.asm"
 
 ;
 ; Utilities
@@ -64,5 +57,3 @@ _startLM:
 done db "Done!", 10, 0
 loadingIDT db "Loading IDT... ", 0
 
-%include "../../AsmFun/Headers64bit/TempRes/main.asm"
-%include "../../AsmFun/Headers64bit/GetDebugStringRes/main.asm"

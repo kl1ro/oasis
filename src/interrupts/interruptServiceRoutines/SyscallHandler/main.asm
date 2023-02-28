@@ -1,6 +1,5 @@
 _syscallHandler:
-	mov rsi, syscallText
-	call _print
+	call [syscallTable + rax * 8]
 	iretq
 
-syscallText db "System call!", 0
+syscallTable dq 0, _print

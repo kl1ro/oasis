@@ -58,29 +58,29 @@ _getKeyboardKey:
 	je _cursorGoRight
 
 	;
-        ; Up pressed
-        ;
-        cmp al, 72
-        je _cursorGoUp
+    ; Up pressed
+    ;
+    cmp al, 72
+    je _cursorGoUp
 
 	;
-        ; Left pressed
-        ;
-        cmp al, 75
-        je _cursorGoLeft
+   	; Left pressed
+    ;
+   	cmp al, 75
+    je _cursorGoLeft
 
 	;
-        ; Down pressed
-        ;
-        cmp al, 80
-        je _cursorGoDown
+    ; Down pressed
+    ;
+    cmp al, 80
+    je _cursorGoDown
 
 	;
-        ; If this is a release key 
-        ; interrupt except shift we just break
-        ;
-        cmp al, 80
-        ja _break
+    ; If this is a release key 
+    ; interrupt except shift we just break
+    ;
+    cmp al, 80
+    ja _break
 
 	mov bl, [shiftFlag]
 	test bl, bl
