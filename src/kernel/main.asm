@@ -26,6 +26,10 @@ _startLM:
 	mov rsi, done
 	call _print
 
+	mov rsi, done
+	mov rax, 1
+	int 0x80
+
 	;
 	; Wait for commands
 	;

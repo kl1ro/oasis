@@ -102,10 +102,10 @@ _defaultCharacterStyleAfter:
 
 _getCursorAfter:
 	; 
-        ; Restore ax    
-        ;       
+    ; Restore ax    
+	;       
 	mov bx, ax
-        mov ax, r8w
+	mov ax, r8w
 
 ;
 ; Note: this is the cycle start
@@ -126,14 +126,13 @@ _writeCharacterCycle:
 _ifNewLineCharacter:	
 	;
 	; We have to save our ax register
-        ; because for some reason div instruction
-        ; can divide only rax. So r8w register will
-        ; serve as a buffer.
+    ; because for some reason div instruction
+    ; can divide only rax. So r8w register will
+    ; serve as a buffer.
 	;
 	mov r8w, ax
 	mov ax, bx
-	mov rdi, MAX_COLS
-	shl di, 1
+	mov rdi, MAX_COLS * 2
 	xor dx, dx
 	div di
 	sub rdi, 10b
@@ -141,9 +140,9 @@ _ifNewLineCharacter:
 	add rbx, rdi
 	
 	;
-        ; Restore ax
-        ;
-        mov ax, r8w	
+    ; Restore ax
+    ;
+	mov ax, r8w	
 	jmp _newLineCharacterAfter
 
 _elseNewLineCharacter:
@@ -286,21 +285,21 @@ _setCursor:
 	shr bx, 1
 	
 	mov al, 14
-        mov dx, REG_SCREEN_CTRL
-        out dx, al
+    mov dx, REG_SCREEN_CTRL
+    out dx, al
 
-        mov al, bh
-        mov dx, REG_SCREEN_DATA
-        out dx, al
+    mov al, bh
+    mov dx, REG_SCREEN_DATA
+    out dx, al
 
-        mov al, 15
-        mov dx, REG_SCREEN_CTRL
-        out dx, al
+    mov al, 15
+    mov dx, REG_SCREEN_CTRL
+    out dx, al
 
-        mov al, bl
-        mov dx, REG_SCREEN_DATA
-        out dx, al	
-        ret
+    mov al, bl
+    mov dx, REG_SCREEN_DATA
+    out dx, al	
+    ret
 
 ;
 ; Usually we need to print a whole string
@@ -362,7 +361,7 @@ _clearScreen:
 	;
 	mov rax, 0x0720072007200720
 	mov rbx, VIDEO_ADDRESS
-	mov rcx, 0x1f4
+	mov rcx, MAX_COLS * MAX_ROWS / 4
 	
 _clearScreenCycle:
 	mov [rbx], rax
@@ -398,15 +397,15 @@ _handleScrolling:
 	; If the cursor is within the
 	; screen we getting out
 	;
-	cmp rbx, 0xfa0
+	cmp rbx, (MAX_COLS * MAX_ROWS) * 2
 	jne _break
 
-	mov rsi, 0xb80a0 		; Which is the second string
-	mov rdi, 0xb8000		; i.e. the first string
-	mov rcx, 0x1f4
+	mov rsi, VIDEO_ADDRESS + MAX_COLS * 2 		 		; Which is the second string
+	mov rdi, VIDEO_ADDRESS									; i.e. the first string
+	mov rcx, MAX_COLS * MAX_ROWS / 4
 	call _memcpyq
 
-	sub rbx, 0xa0
+	sub rbx, MAX_COLS * 2
 	ret
 
 ;
@@ -440,7 +439,7 @@ _backspace:
 	mov di, MAX_COLS	
 	shl di, 1
 	div di
-	cmp dx, 158
+	cmp dx, MAX_COLS * 2 - 2
 	je _backspacePrevLineIf
 	
         _backspacePrevLineElse:
@@ -498,10 +497,10 @@ _backspace:
 _cursorGoRight:
 	call _getCursor
         xor dx, dx
-        mov di, 160
+        mov di, MAX_COLS * 2
         mov bx, ax
         div di
-        cmp dx, 158
+        cmp dx, MAX_COLS * 2 - 2
 	je _break
         add bx, 2
         call _setCursor
@@ -540,7 +539,7 @@ _cursorGoRight:
 _cursorGoLeft:
         call _getCursor
 	xor dx, dx
-	mov di, 160
+	mov di, MAX_COLS * 2 - 2
 	mov bx, ax
 	div di
 	test dx, dx
@@ -580,7 +579,7 @@ _cursorGoLeft:
 _cursorGoUp:
 	call _getCursor
         mov bx, ax
-	mov di, 160
+	mov di, MAX_COLS * 2
 	sub bx, di
 	test bx, bx
 	jns _setCursor
@@ -617,9 +616,9 @@ _cursorGoUp:
 _cursorGoDown:
         call _getCursor
         mov bx, ax
-        mov di, 160
+        mov di, MAX_COLS * 2
         add bx, di
-        cmp bx, 4000
+        cmp bx, MAX_COLS * MAX_ROWS * 2
         jl _setCursor
         ret
 

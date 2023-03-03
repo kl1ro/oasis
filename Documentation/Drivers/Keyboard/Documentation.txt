@@ -42,20 +42,23 @@ List of all functions and their outputs:
 
                         	- rdx is a number of screen data port
 
+		Else:
+			
 			- rax is modified
-
 			
 			- rbx equals to offset to the
-                	place after the last character
-                	of the string on the screen
+        	place after the last character
+                			of the string on the screen
 
-			- rcx is modified
+							- rcx is modified
 
-			- dx equals to screen data register port number
+							- dx equals to screen data register port number
 
-	                - rsi point to the end of the string
+	               		 	- rsi point to the end of the string
 
-        	        - rdi equals to 0
+        	       	 		- rdi equals to 0
 
-			- r9 equals to rsi
+							- r8 is modified
+
+							- r9 equals to rsi
 
