@@ -1,6 +1,8 @@
 org 0x5000
 bits 64
 
+section .text
+
 _startLM:	
 	;
 	; Printing about switching 
@@ -24,12 +26,8 @@ _startLM:
 	; Print about loading IDT success
 	;	
 	mov rsi, done
-	call _print
-
-	mov rsi, done
-	mov rax, 1
-	int 0x80
-
+	call _print	
+	
 	;
 	; Wait for commands
 	;
@@ -42,13 +40,21 @@ _startLM:
 %include "src/drivers/screen/main.asm"
 
 ;
+; Syscalls
+;
+%include "src/syscalls/sysRead/main.asm"
+
+;
 ; AsmFunctions
 ;
 %include "../../AsmFun/Headers64bit/LoadIDT/main.asm"
 %include "../../AsmFun/Headers64bit/Memcpyq/main.asm"
 %include "../../AsmFun/Headers64bit/Break/main.asm"
+%include "../../AsmFun/Headers64bit/InterruptBreak/main.asm"
 %include "../../AsmFun/Headers64bit/HaltMachine/main.asm"
 %include "../../AsmFun/Headers64bit/Memclrb/main.asm"
+%include "../../AsmFun/Headers64bit/Negate/main.asm"
+%include "../../AsmFun/Headers64bit/Sleep/main.asm"
 
 ;
 ; Utilities

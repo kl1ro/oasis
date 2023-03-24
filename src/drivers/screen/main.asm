@@ -539,7 +539,7 @@ _cursorGoRight:
 _cursorGoLeft:
         call _getCursor
 	xor dx, dx
-	mov di, MAX_COLS * 2 - 2
+	mov di, MAX_COLS * 2
 	mov bx, ax
 	div di
 	test dx, dx

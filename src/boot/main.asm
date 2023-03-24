@@ -10,6 +10,14 @@ _start:
 	mov ss, ax				; Setup stack
 	mov bp, 0x9000
 	mov sp, bp
+	
+	;
+	; So dl is a drive number now 
+	; and we have to protect it from 
+	; being overwritten. But bios functions
+	; may modify it, so the push is the only option.
+	;
+	push dx
 
 	;
 	; Set videomode
@@ -18,15 +26,6 @@ _start:
 	mov al, 03h
 	int 10h
 	
-	;
-	; So dl is a drive number now 
-	; and we have to protect it from 
-	; overwriting. But our function _newLine
-	; modifies it. We use di as a buffer to store dx 
-	; in it.	
-	;
-	mov di, dx	
-	
 	; Printing osName
 	mov si, osName
 	call _print
@@ -34,15 +33,15 @@ _start:
 	call _newLine
 
 	; Printing about kernel loading
-        mov si, kernelLoading
-        call _print
+    	mov si, kernelLoading
+    	call _print
 	
 	;
 	; Loading kernel from disk
 	; Note: ax is a hardcoded value
 	; And we need to restore dx cause
 	; it is overwritten by _newLine
-	mov dx, di
+	pop dx
 	mov bx, KERNEL_OFFSET
 	mov ax, 22
 	call _diskLoad
@@ -54,8 +53,13 @@ _start:
 	call _newLine
 
 	; Printing entering LM
-        mov si, enteringLM
-        call _print
+    	mov si, enteringLM
+    	call _print
+
+	; Enable the A20 line
+	in al, 0x92
+	or al, 2
+	out 0x92, al
 
 ; Switching to Long Mode
 %include "../../AsmFun/Headers16bit/SwitchToLM/main.asm"
@@ -70,10 +74,10 @@ _start:
 ; Defining some usefull constants
 KERNEL_OFFSET equ 0x5000
 ; Strings
-osName db "AsmFun Operating System 64-bit version 0.06", 0
+osName db "AsmfunOs 64-bit version 0.06", 0
 kernelLoading db "Loading the kernel... ", 0
 done db "Done!", 0
-enteringLM db "Entering 64-bit Long Mode... ", 0
+enteringLM db "Entering long mode...", 0
 
 times 510-($-$$) db 0			; Pad remainder of boot sector with 0s
 dw 0xaa55				; The standard PC boot signature
