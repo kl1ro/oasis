@@ -27,7 +27,7 @@ _startLM:
 	;	
 	mov rsi, done
 	call _print	
-	
+
 	;
 	; Wait for commands
 	;
