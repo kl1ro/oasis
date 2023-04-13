@@ -2,22 +2,22 @@ org 0x7c00
 bits 16
 
 _start:	
-        ;
+	;
 	; Note: now dl is a current drive number
-        ;
-        ; Setup the data segments
-        ;
+	;
+	; Setup the data segments
+	;
 	mov ax, 0				
 	mov ds, ax
 	mov es, ax	
 
-        ;
-        ; Setup stack
-        ;
+	;
+	; Setup stack
+	;
 	mov ss, ax				
 	mov bp, 0x9000
 	mov sp, bp
-	
+
 	;
 	; So dl is a drive number now 
 	; and we have to protect it from 
@@ -32,49 +32,49 @@ _start:
 	mov ah, 00h
 	mov al, 03h
 	int 10h
-	
-        ;
+
+	;
 	; Print osName
-        ;
+	;
 	mov si, osName
 	call _print
 	xor bh, bh
 	call _newLine
 
-        ;
+	;
 	; Print about kernel loading
-        ;
-    	mov si, kernelLoading
-    	call _print
-	
+	;
+	mov si, kernelLoading
+	call _print
+
 	;
 	; Loading kernel from disk
 	; Note: ax is a hardcoded value and we need
-        ; to restore dx cause it is most likely 
-        ; overwritten by _newLine
-        ;
+	; to restore dx cause it is most likely 
+	; overwritten by _newLine
+	;
 	pop dx
 	mov bx, KERNEL_OFFSET
 	mov ax, 22
 	call _diskLoad
-	
-        ;
+
+	;
 	; Print about loading success
-        ;
+	;
 	mov si, done
 	call _print
 	xor bh, bh
 	call _newLine
 
-        ;
+	;
 	; Print about entering LM
-        ;
-    	mov si, enteringLM
-    	call _print
+	;
+	mov si, enteringLM
+	call _print
 
-        ;
+	;
 	; Enable the A20 line
-        ;
+	;
 	in al, 0x92
 	or al, 2
 	out 0x92, al

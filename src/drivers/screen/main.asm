@@ -57,116 +57,116 @@ _printAt:
 	test ah, ah
 	jnz _defaultCharacterStyleAfter
 
-_defaultCharacterStyle:
-        mov ah, 0x07
+	_defaultCharacterStyle:
+			mov ah, 0x07
 
-_defaultCharacterStyleAfter:
+	_defaultCharacterStyleAfter:
+		;
+		; Then we need to calculate memory
+		; position to put our first character to
+		;
+		; Firstly we check if row and colomn 
+		; are positive. If they're not we 
+		; gotta get our cursor position and 
+		; write the character after that. Well,
+		; if they are then we need to specify
+		; the offset in memory.
+		;
+		; Note: we need to define that rbx is
+		; an offset from start of the video 
+		; memory
+		;
+		; Save ax from being overwritten
+		; r8w is a buffer
+		;
+		mov r8w, ax
+		
+		;
+		; Clear rbx because we use entire
+		; register but mov only to a part of
+		; this register and that cause the 
+		; problems for us
+		;
+		xor rbx, rbx	
+
+		cmp ch, 0
+		jl _ifGetCursor
+		cmp cl, 0
+		jl _ifGetCursor
+		
+		call _getVideomemoryOffset
+		jmp _getCursorAfter	
+
+		_ifGetCursor:
+			call _getCursor
+
+		_getCursorAfter:
+			; 
+			; Restore ax    
+			;       
+			mov bx, ax
+			mov ax, r8w
+
 	;
-	; Then we need to calculate memory
-	; position to put our first character to
+	; Note: this is the cycle start
 	;
-	; Firstly we check if row and colomn 
-	; are positive. If they're not we 
-	; gotta get our cursor position and 
-	; write the character after that. Well,
-	; if they are then we need to specify
-	; the offset in memory.
-	;
-	; Note: we need to define that rbx is
-	; an offset from start of the video 
-	; memory
-	;
-	; Save ax from being overwritten
-	; r8w is a buffer
-	;
-	mov r8w, ax
+	_writeCharacterCycle:
+		;
+		; If we see a newline character, set 
+		; offset to the end of current row, so 
+		; it will be advanced to the first col
+		; of the next row.
+		;
+		mov al, [rsi]
+		test al, al
+		jz _break
+		cmp al, 10
+		jne _elseNewLineCharacter 
+
+		_ifNewLineCharacter:	
+			;
+			; We have to save our ax register
+			; because for some reason div instruction
+			; can divide only rax. So r8w register will
+			; serve as a buffer.
+			;
+			mov r8w, ax
+			mov ax, bx
+			mov rdi, MAX_COLS * 2
+			xor dx, dx
+			div di
+			sub rdi, 10b
+			sub di, dx
+			add rbx, rdi
+			
+			;
+			; Restore ax
+			;
+			mov ax, r8w	
+			jmp _newLineCharacterAfter
+
+		_elseNewLineCharacter:
+			;
+			; Otherwise we just write the character 
+			; to the video memory at our calculated 
+			; offset
+			;
+			mov [rbx + VIDEO_ADDRESS], ax
 	
-	;
-	; Clear rbx because we use entire
-	; register but mov only to a part of
-	; this register and that cause the 
-	; problems for us
-	;
-	xor rbx, rbx	
-
-	cmp ch, 0
-	jl _ifGetCursor
-	cmp cl, 0
-	jl _ifGetCursor
-	
-	call _getVideomemoryOffset
-	jmp _getCursorAfter	
-
-	_ifGetCursor:
-		call _getCursor
-
-_getCursorAfter:
-	; 
-    ; Restore ax    
-	;       
-	mov bx, ax
-	mov ax, r8w
-
-;
-; Note: this is the cycle start
-;
-_writeCharacterCycle:
-	;
-	; If we see a newline character, set 
-	; offset to the end of current row, so 
-	; it will be advanced to the first col
-	; of the next row.
-	;
-	mov al, [rsi]
-	test al, al
-	jz _break
-	cmp al, 10
-	jne _elseNewLineCharacter 
-
-_ifNewLineCharacter:	
-	;
-	; We have to save our ax register
-    ; because for some reason div instruction
-    ; can divide only rax. So r8w register will
-    ; serve as a buffer.
-	;
-	mov r8w, ax
-	mov ax, bx
-	mov rdi, MAX_COLS * 2
-	xor dx, dx
-	div di
-	sub rdi, 10b
-	sub di, dx
-	add rbx, rdi
-	
-	;
-    ; Restore ax
-    ;
-	mov ax, r8w	
-	jmp _newLineCharacterAfter
-
-_elseNewLineCharacter:
-	;
-	; Otherwise we just write the character 
-	; to the video memory at our calculated 
-	; offset
-	;
-	mov [rbx + VIDEO_ADDRESS], ax
-	
-_newLineCharacterAfter:
-	;
-	; Update the offset to the next character cell, which is
-	; two bytes ahead of the current cell.
-	;	
-	add rbx, 10b
-	inc rsi
-	mov r9, rsi
-	call _handleScrolling
-	mov rsi, r9
-	mov r8, rbx
-	call _setCursor	
-	mov rbx, r8
-	jmp _writeCharacterCycle
+		_newLineCharacterAfter:
+			;
+			; Update the offset to the next character cell, which is
+			; two bytes ahead of the current cell.
+			;	
+			add rbx, 10b
+			inc rsi
+			mov r9, rsi
+			call _handleScrolling
+			mov rsi, r9
+			mov r8, rbx
+			call _setCursor	
+			mov rbx, r8
+			jmp _writeCharacterCycle
 	
 ;
 ; Then we need to specify the functions 
@@ -199,7 +199,9 @@ _getVideomemoryOffset:
 	shr cx, 8
 	add ax, cx
 
+	;
 	; i.e. multiplication by two
+	;
 	shl ax, 1
 	ret
 
@@ -363,13 +365,13 @@ _clearScreen:
 	mov rbx, VIDEO_ADDRESS
 	mov rcx, MAX_COLS * MAX_ROWS / 4
 	
-_clearScreenCycle:
-	mov [rbx], rax
-	add rbx, 8
-	loop _clearScreenCycle
-	xor rbx, rbx
-	call _setCursor
-	ret
+	_clearScreenCycle:
+		mov [rbx], rax
+		add rbx, 8
+		loop _clearScreenCycle
+		xor rbx, rbx
+		call _setCursor
+		ret
 
 ;
 ; In order to keep our screen from 
@@ -442,7 +444,7 @@ _backspace:
 	cmp dx, MAX_COLS * 2 - 2
 	je _backspacePrevLineIf
 	
-        _backspacePrevLineElse:
+	_backspacePrevLineElse:
 		mov al, 32	
 		mov [VIDEO_ADDRESS + rbx], al
 		call _setCursor
@@ -496,15 +498,15 @@ _backspace:
 ;
 _cursorGoRight:
 	call _getCursor
-        xor dx, dx
-        mov di, MAX_COLS * 2
-        mov bx, ax
-        div di
-        cmp dx, MAX_COLS * 2 - 2
+	xor dx, dx
+	mov di, MAX_COLS * 2
+	mov bx, ax
+	div di
+	cmp dx, MAX_COLS * 2 - 2
 	je _break
-        add bx, 2
-        call _setCursor
-        ret
+	add bx, 2
+	call _setCursor
+	ret
 
 
 ;
@@ -537,16 +539,16 @@ _cursorGoRight:
 ;		- bx equals to the cursor offset
 ;
 _cursorGoLeft:
-        call _getCursor
+	call _getCursor
 	xor dx, dx
 	mov di, MAX_COLS * 2
 	mov bx, ax
 	div di
 	test dx, dx
 	jz _break
-        sub bx, 2
-        call _setCursor
-        ret
+	sub bx, 2
+	call _setCursor
+	ret
 
 ;
 ; This function puts the cursor up by one
@@ -578,7 +580,7 @@ _cursorGoLeft:
 ;
 _cursorGoUp:
 	call _getCursor
-        mov bx, ax
+	mov bx, ax
 	mov di, MAX_COLS * 2
 	sub bx, di
 	test bx, bx

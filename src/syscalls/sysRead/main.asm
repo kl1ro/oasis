@@ -19,4 +19,4 @@ _sysRead:
 			mov rcx, 10
 			call _sleep
 			jmp ._cycle
-	ret
+		ret
