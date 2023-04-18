@@ -102,7 +102,7 @@ KERNEL_OFFSET equ 0x5000
 ;
 ; Strings
 ;
-osName db "AsmfunOs 64-bit version 0.06", 0
+osName db "Oasis 64-bit version 0.06", 0
 kernelLoading db "Loading the kernel... ", 0
 done db "Done!", 0
 enteringLM db "Entering long mode...", 0

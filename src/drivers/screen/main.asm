@@ -12,7 +12,7 @@ MAX_ROWS equ 25
 MAX_COLS equ 80
 GRAY_ON_BLACK equ 0x07
 
-; Screen device 1/0 ports
+; Screen device I/O ports
 REG_SCREEN_CTRL equ 0x3d4
 REG_SCREEN_DATA equ 0x3d5
 
@@ -403,7 +403,7 @@ _handleScrolling:
 	jne _break
 
 	mov rsi, VIDEO_ADDRESS + MAX_COLS * 2 		 		; Which is the second string
-	mov rdi, VIDEO_ADDRESS									; i.e. the first string
+	mov rdi, VIDEO_ADDRESS								; i.e. the first string
 	mov rcx, MAX_COLS * MAX_ROWS / 4
 	call _memcpyq
 

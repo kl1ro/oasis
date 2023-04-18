@@ -1,4 +1,4 @@
-__________________AsmFunOs__Kernel__Documentation______________________
+__________________Oasis__Kernel__Documentation______________________
 
 
 Well, the kernel is NOT straightforward at all and that is not my fault

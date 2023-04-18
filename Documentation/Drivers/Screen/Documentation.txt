@@ -1,9 +1,9 @@
-______________________AsmFunOs_screen_driver_Documentation__________________________
+______________________Oasis_screen_driver_Documentation__________________________
 
 My vision of driver is that driver is a software that gives the system more functions
 to communicate with external devices. So in this driver device is a screen.
 Note: dependency of this driver is only this file:
-	"AsmFunOs/src/drivers/screen/main.asm"
+	"Oasis/src/drivers/screen/main.asm"
 
 Here's a list of all functions that can be used by system for communicating with the screen:
 
