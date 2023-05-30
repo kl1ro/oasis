@@ -1,5 +1,6 @@
 org 0x5000
 bits 64
+[map all etc/links.map]
 
 section .text
 
@@ -28,9 +29,6 @@ _startLM:
 	mov rsi, done
 	call _print	
 
-	;
-	; Wait for commands
-	;
 	jmp _console
 
 ;
@@ -52,10 +50,8 @@ _startLM:
 %include "../../AsmFun/Headers64bit/Break/main.asm"
 %include "../../AsmFun/Headers64bit/InterruptBreak/main.asm"
 %include "../../AsmFun/Headers64bit/HaltMachine/main.asm"
-%include "../../AsmFun/Headers64bit/Memclrb/main.asm"
 %include "../../AsmFun/Headers64bit/Negate/main.asm"
 %include "../../AsmFun/Headers64bit/Sleep/main.asm"
-
 ;
 ; Utilities
 ;
