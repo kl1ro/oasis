@@ -1,0 +1,1 @@
+floppya: 1_44="build/main_floppy.img", status=inserted
