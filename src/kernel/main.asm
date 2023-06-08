@@ -27,7 +27,7 @@ _startLM:
 	; Print about loading IDT success
 	;	
 	mov rsi, done
-	call _print	
+	call _print
 
 	jmp _console
 
@@ -36,6 +36,21 @@ _startLM:
 ;
 %include "src/drivers/keyboard/main.asm"
 %include "src/drivers/screen/main.asm"
+
+;
+; Interrupt handlers
+;
+%include "src/interrupts/interruptServiceRoutines/DivisionBy0InterruptHandler/main.asm"
+%include "src/interrupts/interruptServiceRoutines/InvalidOpcodeInterruptHandler/main.asm"
+%include "src/interrupts/interruptServiceRoutines/DeviceNotAvailableInterruptHandler/main.asm"
+%include "src/interrupts/interruptServiceRoutines/InvalidTSSInterruptHandler/main.asm"
+%include "src/interrupts/interruptServiceRoutines/SegmentNotPresentInterruptHandler/main.asm"
+%include "src/interrupts/interruptServiceRoutines/StackSegmentFaultInterruptHandler/main.asm"
+%include "src/interrupts/interruptServiceRoutines/IgnoreInterruptHandler/main.asm"
+%include "src/interrupts/interruptServiceRoutines/KeyboardInterruptHandler/main.asm"
+%include "src/interrupts/interruptServiceRoutines/ClockInterruptHandler/main.asm"
+%include "src/interrupts/interruptServiceRoutines/SyscallHandler/main.asm"
+%include "src/interrupts/resources/IDTInterruptGatePattern/main.asm"
 
 ;
 ; Syscalls
