@@ -11,16 +11,16 @@ Output file:  build/kernel.bin
 -- Sections (summary) ---------------------------------------------------------
 
 Vstart            Start             Stop              Length    Class     Name
-            5000              5000              5587  00000587  progbits  .text
-            5588              5588              55DD  00000055  progbits  .data
-            55E0              55E0              55E5  00000005  nobits    .bss
+            5000              5000              56E2  000006E2  progbits  .text
+            56E4              56E4              5836  00000152  progbits  .data
+            5838              5838              583D  00000005  nobits    .bss
 
 -- Sections (detailed) --------------------------------------------------------
 
 ---- Section .text ------------------------------------------------------------
 
 class:     progbits
-length:                 587
+length:                 6E2
 start:                 5000
 align:     not defined
 follows:   not defined
@@ -31,11 +31,11 @@ vfollows:  not defined
 ---- Section .data ------------------------------------------------------------
 
 class:     progbits
-length:                  55
-start:                 5588
+length:                 152
+start:                 56E4
 align:                    4
 follows:   not defined
-vstart:                5588
+vstart:                56E4
 valign:    not defined
 vfollows:  not defined
 
@@ -43,10 +43,10 @@ vfollows:  not defined
 
 class:     nobits
 length:                   5
-start:                 55E0
+start:                 5838
 align:     not defined
 follows:   not defined
-vstart:                55E0
+vstart:                5838
 valign:                   4
 vfollows:  not defined
 
@@ -102,43 +102,53 @@ Real              Virtual           Name
             52E7              52E7  _cursorGoLeft
             530C              530C  _cursorGoUp
             5325              5325  _cursorGoDown
-            5340              5340  _sysRead
-            5346              5346  _sysRead._standardInput
-            5356              5356  _sysRead._cycle
-            5363              5363  _loadIDT
-            54AD              54AD  _loadIDTCycle
-            54CA              54CA  _defineIDTInterruptGate
-            54E4              54E4  _divisionBy0Handler
-            54F8              54F8  divisionBy0
-            5520              5520  _ignoreInterruptHandler
-            5526              5526  _keyboardInterruptHandler
-            5531              5531  _clockInterruptHandler
-            5537              5537  _syscallHandler
-            5540              5540  syscallTable
-            5550              5550  IDTInterruptGatePattern
-            5560              5560  IDTPointer
-            556A              556A  _memcpyq
-            557B              557B  _break
-            557C              557C  _interruptBreak
-            557D              557D  _haltMachine
-            557F              557F  _negate
-            5583              5583  _sleep
+            5340              5340  _divisionBy0Handler
+            5354              5354  _invalidOpcodeInterruptHandler
+            5368              5368  _deviceNotAvailableInterruptHandler
+            537C              537C  _invalidTSSInterruptHandler
+            5390              5390  _segmentNotPresentInterruptHandler
+            53A4              53A4  _stackSegmentFaultInterruptHandler
+            53B8              53B8  _ignoreInterruptHandler
+            53BE              53BE  _keyboardInterruptHandler
+            53C9              53C9  _clockInterruptHandler
+            53CF              53CF  _syscallHandler
+            53D8              53D8  syscallTable
+            53E8              53E8  IDTInterruptGatePattern
+            53F8              53F8  _sysRead
+            53FE              53FE  _sysRead._standardInput
+            540E              540E  _sysRead._cycle
+            541B              541B  _loadIDT
+            5684              5684  _loadIDTCycle
+            56A1              56A1  _defineIDTInterruptGate
+            56BB              56BB  IDTPointer
+            56C5              56C5  _memcpyq
+            56D6              56D6  _break
+            56D7              56D7  _interruptBreak
+            56D8              56D8  _haltMachine
+            56DA              56DA  _negate
+            56DE              56DE  _sleep
 
 ---- Section .data ------------------------------------------------------------
 
 Real              Virtual           Name
-            5588              5588  string
-            5599              5599  _console
-            559B              559B  _consoleIfGotAnEnter
-            55BA              55BA  _chill
-            55C6              55C6  done
-            55CD              55CD  loadingIDT
+            56E4              56E4  divisionBy0
+            570C              570C  _invalidOpcodeInterruptHandler.invalidOpcode
+            573C              573C  _deviceNotAvailableInterruptHandler.deviceNotAvailable
+            5758              5758  _invalidTSSInterruptHandler.invalidTSS
+            5772              5772  _segmentNotPresentInterruptHandler.segmentNotPresent
+            57C1              57C1  _stackSegmentFaultInterruptHandler.stackSegmentFault
+            57E1              57E1  string
+            57F2              57F2  _console
+            57F4              57F4  _consoleIfGotAnEnter
+            5813              5813  _chill
+            581F              581F  done
+            5826              5826  loadingIDT
 
 ---- Section .bss -------------------------------------------------------------
 
 Real              Virtual           Name
-            55E0              55E0  shiftFlag
-            55E1              55E1  keyboardBuffer
-            55E3              55E3  inputCounter
-            55E4              55E4  inputBuffer
+            5838              5838  shiftFlag
+            5839              5839  keyboardBuffer
+            583B              583B  inputCounter
+            583C              583C  inputBuffer
 
