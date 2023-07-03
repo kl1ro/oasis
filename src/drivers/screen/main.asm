@@ -334,6 +334,7 @@ _setCursor:
 ;	- r9 equals to rsi
 ;
 _print:
+	xor ah, ah
 	mov ch, -1
 	call _printAt
 	ret
