@@ -46,7 +46,7 @@ REG_SCREEN_DATA equ 0x3d5
 ;
 ;       - r8 is modified
 ;
-;	- r9 is modified
+;		- r9 is modified
 ;
 _printAt:
 	;
