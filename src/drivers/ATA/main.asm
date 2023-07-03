@@ -35,10 +35,10 @@ ATA:
     ;   Some useful constants
     ;
     .bytesPerSector equ 512
-    .devicePortMasterMessage equ 0xa0
-    .devicePortSlaveMessage equ 0xb0
+    .devicePortIdentifyMasterMessage equ 0xa0
+    .devicePortIdentifySlaveMessage equ 0xb0
     .devicePortReadWriteMasterMessage equ 0xe0
-    .devicePortReadWriteSlaveMessage equ 0xe0
+    .devicePortReadWriteSlaveMessage equ 0xf0
     .commandPortIdentifyMessage equ 0xec
     .commandPortReadMessage equ 0x20
     .commandPortWriteMessage equ 0x30
@@ -75,6 +75,12 @@ ATA:
     ;       - al is 1 if everything worked fine
     ;         otherwise it will be 0
     ;
+    ;       - bl is equal to 0xa0 or 0xb0
+    ;
+    ;       - rdx is modified
+    ;
+    ;       - rcx is modified
+    ;
     ._identify:
         ;
         ;   First we need to tell the ata adapter
@@ -84,16 +90,16 @@ ATA:
         ;   Check who we want to talk to
         ;
         test al, al
-        jz ._ifTalkToSlave
+        jz ._ifTalkToSlaveIdentify
 
-        ._ifTalkToMaster:
-            mov al, .devicePortMasterMessage
-            jmp ._ifTalkToReturn
+        ._ifTalkToMasterIdentify:
+            mov al, .devicePortIdentifyMasterMessage
+            jmp ._ifTalkToReturnIdentify
 
-        ._ifTalkToSlave:
-            mov al, .devicePortSlaveMessage
+        ._ifTalkToSlaveIdentify:
+            mov al, .devicePortIdentifySlaveMessage
     
-        ._ifTalkToReturn:
+        ._ifTalkToReturnIdentify:
 
         ;
         ;   The bl register will store the 
@@ -131,7 +137,7 @@ ATA:
         ;
         ;   Now we need to talk to the master
         ;
-        mov al, .devicePortMasterMessage
+        mov al, .devicePortIdentifyMasterMessage
         out dx, al
 
         ;
@@ -162,16 +168,6 @@ ATA:
         ;   from bl
         ;
         mov al, bl
-
-        mov rdi, .memory
-        mov rcx, 16
-        call _intToString
-        call _addNewLineCharacter
-        call _add0
-        mov rsi, .memory
-        call _print
-        mov al, 0
-        ret
 
         ;
         ;   Calculate the device port
@@ -276,11 +272,14 @@ ATA:
         ;   Read the sector 
         ;
         mov rcx, .bytesPerSector / 2
-
+        
+        ;
+        ;   For now we will read the sector and immediately forget it
+        ;
         ._identifyReadCycle:
             in ax, dx
             loop ._identifyReadCycle
-        
+
         mov al, 1
         ret
 
@@ -291,6 +290,9 @@ ATA:
     ;		- rsi as a port base
     ;
     ;		- al as master/slave bit
+    ;
+    ;   Output:
+    ;       - every single register up to r12 is modified
     ;
     ._checkATAPort:
         ;
@@ -311,7 +313,7 @@ ATA:
             ;
             ;   Save the deviceExist flag
             ;	
-            mov r12b, al
+            inc r12b
 
             ;
             ;   Print that ata device exists
@@ -355,7 +357,8 @@ ATA:
     ;       - nothing
     ;
     ;   Output:
-    ;       - nothing
+    ;       - every single register from rax to r12 
+    ;       is modified
     ;
     ._init:
         ;
@@ -363,6 +366,11 @@ ATA:
         ;
         mov rsi, .lookForATADevicesMessage
         call _print
+
+        ;
+        ;   Set the device exist flag to 0
+        ;
+        xor r12b, r12b
         
         ;
         ;   Check port 0 Master
@@ -431,8 +439,7 @@ ATA:
         ._printNoDevices:
             mov rsi, .noDevicesMessage
             call _print
-        
-        ret
+            ret
 
     ;
     ;   Reads the sector of a disk 
@@ -506,25 +513,14 @@ ATA:
         out dx, al
 
         ;
-        ;   Calculate the control port
-        ;
-        add dx, .controlPortOffset - .errorPortOffset
-
-        ;
-        ;   Clear the hob bit and set nien bit
-        ;
-        mov al, 2
-        out dx, al
-
-        ;
         ;   Calculate the sector count port
         ;
-        sub dx, .controlPortOffset - .sectorCountPortOffset
+        inc dx
 
         ;
         ;   Put 1 into the sector count port
         ;
-        dec al
+        mov al, 1
         out dx, al
 
         ;
@@ -568,9 +564,21 @@ ATA:
 
         ;
         ;   Tell the ATA to execute
-        ;   the identify instruction
+        ;   the read instruction
         ;
         mov al, .commandPortReadMessage
+        push rdx
+        mov rdi, .memory
+        mov rcx, 16
+        call _intToString
+        call _addSpaceCharacter
+        pop rax
+        mov rcx, 16
+        call _intToString
+        call _addNewLineCharacter
+        mov rsi, .memory
+        call _print
+        jmp _haltMachine
         out dx, al
         
         ;
