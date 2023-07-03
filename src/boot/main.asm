@@ -1,5 +1,6 @@
 org 0x7c00
 bits 16
+[map all etc/bootloaderLinks.map]
 
 _start:	
 	;
@@ -7,7 +8,7 @@ _start:
 	;
 	; Setup the data segments
 	;
-	mov ax, 0				
+	xor ax, ax				
 	mov ds, ax
 	mov es, ax	
 
@@ -15,7 +16,7 @@ _start:
 	; Setup stack
 	;
 	mov ss, ax				
-	mov bp, 0x9000
+	mov bp, 0x7bff
 	mov sp, bp
 
 	;
@@ -55,8 +56,9 @@ _start:
 	;
 	pop dx
 	mov bx, KERNEL_OFFSET
-	mov ax, 22
+	mov ax, 65
 	call _diskLoad
+
 
 	;
 	; Print about loading success
@@ -73,7 +75,7 @@ _start:
 	call _print
 
 	;
-	; Enable the A20 line
+	; Enable the A20 KERNEL_OFFSET
 	;
 	in al, 0x92
 	or al, 2
@@ -97,12 +99,12 @@ _start:
 ;
 ; Define some usefull constants
 ;
-KERNEL_OFFSET equ 0x5000
+KERNEL_OFFSET equ 0x7e00
 
 ;
 ; Strings
 ;
-osName db "Oasis 64-bit version 0.06", 0
+osName db "Oasis 64-bit version 0.07", 0
 kernelLoading db "Loading the kernel... ", 0
 done db "Done!", 0
 enteringLM db "Entering long mode...", 0
