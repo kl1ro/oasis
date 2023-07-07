@@ -42,6 +42,7 @@ ATA:
     .commandPortIdentifyMessage equ 0xec
     .commandPortReadMessage equ 0x20
     .commandPortWriteMessage equ 0x30
+    .commandPortFlushMessage equ 0xe7
 
     ;
     ;   Some driver messages
@@ -50,14 +51,13 @@ ATA:
         .ATADeviceDetectedMessage db "    ATA device detected at bus ", 0
         .lookForATADevicesMessage db "Looking for ATA devices:", 10, 0
         .noDevicesMessage db "    No devices were found", 10, 0
-        .error db "    There's an ATA error!", 10, 0
         .slaveMessage db "Slave", 10, 0
         .masterMessage db "Master", 10, 0
 
         ;
         ;   Memory for the hex value
         ;
-	    .ATAPortBaseHex times 4 db 0
+	    .ATAPortBaseHex times 5 db 0
 
     section .text
     
@@ -456,6 +456,17 @@ ATA:
     ;
     ;       - al as the master/slave bit
     ;
+    ;   Output:
+    ;       - al is 1 if everything worked fine, else 0
+    ;
+    ;       - ebx is modified
+    ;
+    ;       - rdi is modified
+    ;
+    ;       - rcx is modified
+    ;
+    ;       - r8 is modified
+    ;
     ._read:
         ;
         ;   All ATA commands are relatively the
@@ -520,7 +531,7 @@ ATA:
         ;
         ;   Put 1 into the sector count port
         ;
-        mov al, 1
+        inc al
         out dx, al
 
         ;
@@ -567,18 +578,6 @@ ATA:
         ;   the read instruction
         ;
         mov al, .commandPortReadMessage
-        push rdx
-        mov rdi, .memory
-        mov rcx, 16
-        call _intToString
-        call _addSpaceCharacter
-        pop rax
-        mov rcx, 16
-        call _intToString
-        call _addNewLineCharacter
-        mov rsi, .memory
-        call _print
-        jmp _haltMachine
         out dx, al
         
         ;
@@ -591,7 +590,7 @@ ATA:
             ;   First bit means ata device error
             ;
             bt ax, 0
-            jc ._printError
+            jc ._error
 
             ;
             ;   Eighth bit means ata device busy
@@ -613,34 +612,262 @@ ATA:
         ;   Calculate the data port
         ;
         sub dx, .commandPortOffset - .dataPortOffset
-        
+
+        ;
+        ;   Check the first bit of byte count register,
+        ;   which is rcx and move it from rcx to r8
+        ;
+        mov r8b, cl
+        shr rcx, 1
+
         ;
         ;   Read the sector 
         ;   and store it in memory being
         ;   pointed by rdi
         ;
-        mov r10, .bytesPerSector / 2
-        xor rax, rax
-
         ._readCycle:
             in ax, dx
-            mov rsi, .memory
-            mov [rsi], ax
-            xor ah, ah
-            call _print
-            dec r10
-            test r10, r10
-            jnz ._readCycle
+            mov [rdi], ax
+            add rdi, 2
+            loop ._readCycle
+
+        bt r8w, 0
+        jnc ._ifOddAfterReadCycleReturn
+
+        ._ifOddAfterReadCycle:
+            in ax, dx
+            mov [rdi], al
+
+        ._ifOddAfterReadCycleReturn:
         
         mov al, 1
         ret
+
+    ;
+    ;   Writes 512 bytes from memory being pointed by rsi to 
+    ;   to sector pointed by lba
+    ;
+    ;   Input:
+    ;       - rdi as a port base
+    ;
+    ;       - ebx as the 28 bit lba address
+    ;
+    ;       - rsi as a pointer to memory
+    ;
+    ;       - al as the master/slave bit
+    ;
+    ._write:
+        ;
+        ;   All ATA commands are similar, so again...
+        ;
+        ;   First we need to tell the ata adapter
+        ;   that we need to talk to the master or 
+        ;   to the slave
+        ;
+
+        ;
+        ;   Check who we want to talk to
+        ;
+        test al, al
+        jz ._ifTalkToSlaveWrite
+
+        ._ifTalkToMasterWrite:
+            mov al, .devicePortReadWriteMasterMessage
+            jmp ._ifTalkToReturnWrite
+
+        ._ifTalkToSlaveWrite:
+            mov al, .devicePortReadWriteSlaveMessage
     
-    ._printError:
-        mov rsi, .error
-        call _print
+        ._ifTalkToReturnWrite:
+
+        ;
+        ;   Take the last 4 bits of the sector 
+        ;   and put it to the device port
+        ;
+        mov r8d, ebx
+        shr r8d, 24
+        or al, r8b
+
+        ;
+        ;   Calculate the device port
+        ;
+        mov dx, di
+        add dx, .devicePortOffset
+
+        ;
+        ;   Tell the ata adapter who we want to talk to
+        ;   and tell the last 4 lba bits
+        ;
+        out dx, al
+
+        ;
+        ;   Calculate the error port
+        ;
+        sub dx, .devicePortOffset - .errorPortOffset
+
+        ;
+        ;   Null the error port
+        ;
+        xor al, al
+        out dx, al
+
+        ;
+        ;   Calculate the sector count port
+        ;
+        inc dx
+
+        ;
+        ;   Put 1 into the sector count port
+        ;
+        inc al
+        out dx, al
+
+        ;
+        ;   Calculate the lba low port
+        ;
+        inc dx
+
+        ;
+        ;   Put low lba bits into the lba low port
+        ;
+        mov al, bl
+        out dx, al
+
+        ;
+        ;   Calculate the lba mid port
+        ;
+        inc dx
+
+        ;
+        ;   Put mid lba bits into the lba mid port
+        ;
+        mov al, bh
+        out dx, al
+
+        ;
+        ;   Calculate the lba high port
+        ;
+        inc dx
+
+        ;
+        ;   Put high lba bits into the lba high port
+        ;
+        shr ebx, 8
+        mov al, bh
+        out dx, al
+        
+        ;
+        ;   Calculate the command port
+        ;
+        add dx, .commandPortOffset - .lbaHighPortOffset
+
+        ;
+        ;   Tell the ATA to execute
+        ;   the read instruction
+        ;
+        mov al, .commandPortWriteMessage
+        out dx, al
+
+        ;
+        ;   Calculate the data port
+        ;
+        mov dx, di
+        
+        mov rcx, .bytesPerSector / 2
+        
+        ;
+        ;   Write the sector from memory being
+        ;   pointed by rdi to disk
+        ;
+        ._writeCycle:
+            mov ax, [rsi]
+            out dx, ax
+            add rsi, 2
+            loop ._writeCycle
+        
+        mov al, 1
         ret
 
-    section .data
-        .memory times 15 db 0
+    ;
+    ;   This function will flush the device
+    ;
+    ;   Input:
+    ;       - rdi as the device port
+    ;
+    ;       - al as the master/slave bit
+    ;
+    ;   Output:
+    ;       -
+    ;
+    ._flush:
+        ;
+        ;   Check who we want to talk to
+        ;
+        test al, al
+        jz ._ifTalkToSlaveFlush
 
-    section .text
+        ._ifTalkToMasterFlush:
+            mov al, .devicePortReadWriteMasterMessage
+            jmp ._ifTalkToReturnFlush
+
+        ._ifTalkToSlaveFlush:
+            mov al, .devicePortReadWriteSlaveMessage
+    
+        ._ifTalkToReturnFlush:
+
+        ;
+        ;   Calculate the device port
+        ;
+        mov dx, di
+        add dx, .devicePortOffset
+
+        ;
+        ;   Tell the ata adapter who we want to talk to
+        ;
+        out dx, al
+
+        ;
+        ;   Calculate the command port
+        ;
+        inc dx
+
+        ;
+        ;   Tell the ATA device to execute the flush instruction
+        ;
+        mov al, .commandPortFlushMessage
+        out dx, al
+
+        ;
+        ;   Get the ATA Drive status
+        ;
+        in al, dx
+
+        ._waitForDeviceFlush:
+            ;
+            ;   First bit means ata device error
+            ;
+            bt ax, 0
+            jc ._error
+
+            ;
+            ;   Eighth bit means ata device busy
+            ;
+            bt ax, 7
+            jc ._waitStatusConfirmedFlush
+            jmp ._waitForDeviceReturnFlush
+
+            ._waitStatusConfirmedFlush:
+                ;
+                ;   Get new ATA Drive status
+                ;
+                in al, dx
+                jmp ._waitForDeviceFlush
+
+        ._waitForDeviceReturnFlush:
+
+        mov al, 1
+        ret
+    
+    ._error:
+        xor al, al
+        ret
