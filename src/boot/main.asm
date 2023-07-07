@@ -104,7 +104,7 @@ KERNEL_OFFSET equ 0x7e00
 ;
 ; Strings
 ;
-osName db "Oasis 64-bit version 0.07", 0
+osName db "Oasis 64-bit version 0.08", 0
 kernelLoading db "Loading the kernel... ", 0
 done db "Done!", 0
 enteringLM db "Entering long mode...", 0
