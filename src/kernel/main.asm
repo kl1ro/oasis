@@ -28,34 +28,7 @@ _startLM:
 	;	
 	mov rsi, done
 	call _print
-
-	;
-	; Check all ATA ports
-	;
-	call ATA._init
-
-	mov rsi, diskMessage
-	mov rdi, diskSectorBuffer
-	call _strcpy
-
-	mov rsi, diskSectorBuffer
-	mov rdi, ATA.port0Base
-	mov al, 1
-	mov ebx, 0
-	call ATA._write
-	test al, al
-	jz _haltMachine
-	call ATA._flush
-
-	mov rsi, ATA.port0Base
-	mov rdi, diskSectorBuffer
-	mov al, 1
-	xor ebx, ebx
-	mov rcx, 512
-	call ATA._read
-
-	mov rsi, diskSectorBuffer
-	call _print
+    call PCI._init
 
 	jmp _chill
 
@@ -65,6 +38,7 @@ _startLM:
 %include "src/drivers/keyboard/main.asm"
 %include "src/drivers/screen/main.asm"
 %include "src/drivers/ATA/main.asm"
+%include "src/drivers/PCI/main.asm"
 
 ;
 ; Interrupt handlers
@@ -109,12 +83,12 @@ _startLM:
 %include "../../AsmFun/Headers64bit/AddNewLineCharacter/main.asm"
 %include "../../AsmFun/Headers64bit/AddSpaceCharacter/main.asm"
 %include "../../AsmFun/Headers64bit/Strcpy/main.asm"
+%include "../../AsmFun/Headers64bit/Pusha/main.asm"
+%include "../../AsmFun/Headers64bit/Popa/main.asm"
 
 ;
 ; Strings
 ;
 done db "Done!", 10, 0
+lineBreak db 10, 0
 loadingIDT db "Loading IDT... ", 0
-diskMessage db "This message is put to the disk drive and is taken from it!", 0
-diskSectorBuffer times 512 db 0
-
