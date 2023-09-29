@@ -1,56 +1,89 @@
 ;
-; Some useful constants
+;	Some useful constants
 ;
 KEYBOARD_DATAPORT equ 0x60
 KEYBOARD_COMMANDPORT equ 0x64
 
 ;
-; This is a keyboard driver that 
-; is invoked when the keyboard interrupt,
-; which is 0x21, is triggered
+;	This is a keyboard driver that is invoked whenever the keyboard interrupt,
+;	which is 0x21, is triggered.
 ;
-; A assume that the keyboard driver knows
-; that some job wants a keyboard input. Thus 
-; the keyboard driver wants the rdi register
-; to contain the pointer to the buffer that 
-; serves to put the ascii characters to and 
-; the rcx register to contain the number of characters
-; to read. Note: if registers don't contain 
-; the necessary information the driver won't work!
+;	Input:
+;		- nothing
 ;
-; Input:
-;	- rdi as a pointer to memory
+;	Output:
+;		If [SHIFT] is pressed or released:
+;			- rax is 1 if pressed and 0 if released
 ;
-;	- rcx as a number of characters to read
+;			- dx equals to keyboard data port
+;
+;		Else if [Backspace] is pressed:
+;			If the cursor is on the first character of the screen:
+;				- rax is modified
+;
+;				- rbx is modified
+;
+;				- rcx equals to 0
+;
+;				- rdx is a number of screen data port
+;
+;				- rdi equals to maximum cols * 2
+;
+;			Else if the cursor is on one of the rest of the characters:
+;				- rax is modified
+;
+;				- rbx is modified
+;
+;				- rdx is a number of screen data port
+;
+;		Else:
+;			- rax is modified
+;			
+;			- rbx equals to offset to the place after the last character
+;             of the string on the screen
+;
+;			- rcx is modified
+;
+;			- dx equals to screen data register port number
+;
+;			- rsi point to the end of the string
+;
+;			- rdi equals to 0
+;
+;			- r8 is modified
+;
+;			- r9 equals to rsi
+;
+;	Input:
+;		- nothing
 ;
 _getKeyboardKey:
 	;
-	; First things first read the data
-	; stored in the keyboard dataport
+	;	First things first read the data
+	;	stored in the keyboard dataport
 	;
 	xor rax, rax
 	mov dx, KEYBOARD_DATAPORT
 	in al, dx
 
 	;
-	; Then we need to check all of the	
-	; cases of key codes
+	;	Then we need to check all of the cases of key codes
 	;
 	
 	;
-	; Escape button
+	;	Escape button
 	;
 	cmp al, 1
 	je _break
 
 	;	
-	; Backspace
+	;	Backspace
 	;
 	cmp al, 14
-	je _backspace
+	je Screen._backspace
 		
 	;
-	; Shift pushed
+	;	Shift pushed
 	;
 	cmp al, 54
 	je _keyboardCaseShiftPushed
@@ -58,40 +91,40 @@ _getKeyboardKey:
 	je _keyboardCaseShiftPushed
 	
 	;
-	; Shift released
-	; 
+	;	Shift released
+	;	
 	cmp al, 170
 	je _keyboardCaseShiftReleased
 	cmp al, 182
 	je _keyboardCaseShiftReleased
 
 	;
-	; Right pressed
+	;	Right pressed
 	;
 	cmp al, 77
-	je _cursorGoRight
+	je Screen._cursorGoRight
 
 	;
-	; Up pressed
+	;	Up pressed
 	;
 	cmp al, 72
-	je _cursorGoUp
+	je Screen._cursorGoUp
 
 	;
-	; Left pressed
+	;	Left pressed
 	;
 	cmp al, 75
-	je _cursorGoLeft
+	je Screen._cursorGoLeft
 
 	;
-	; Down pressed
+	;	Down pressed
 	;
 	cmp al, 80
-	je _cursorGoDown
+	je Screen._cursorGoDown
 
 	;
-	; If this is a release key 
-	; interrupt except shift we just break
+	;	If this is a release key 
+	;	interrupt except shift we just break
 	;
 	cmp al, 80
 	ja _break
@@ -110,7 +143,7 @@ _getKeyboardKey:
 	_keyboardCaseAfter:
 		mov rsi, keyboardBuffer
 		mov [rsi], al
-		call _print
+		call Screen._print
 		ret
 
 	_keyboardCaseShiftPushed:
@@ -119,24 +152,23 @@ _getKeyboardKey:
 		ret
 	
 	_keyboardCaseShiftReleased:
-                xor al, al
-                mov [shiftFlag], al
-                ret
+		xor al, al
+		mov [shiftFlag], al
+		ret
 
 section .data
 	shiftFlag db 0
 	keyboardBuffer times 2 db 0
 
 	;
-	; This is counter of characters to read 
-	; from keyboard. It is received from user code
-	; when it does the sysRead syscall
+	;	This is a counter of characters to read from the keyboard. 
+	;	It is received from user code when it does the sysRead syscall.
 	;
 	inputCounter db 0
 
 	;
-	; This is the buffer that is received from user
-	; code from sysRead syscall
+	;	This is the buffer that is received from user
+	;	code from sysRead syscall
 	;
 	inputBuffer db 0
 

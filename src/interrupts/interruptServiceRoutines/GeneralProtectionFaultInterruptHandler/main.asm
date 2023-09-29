@@ -4,5 +4,5 @@ _generalProtectionFaultInterruptHandler:
     
     section .text
         mov rsi, .generalProtectionFault
-        call _print
+        call Screen._print
         jmp _haltMachine

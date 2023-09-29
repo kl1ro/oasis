@@ -4,5 +4,5 @@ _pageFaultInterruptHandler:
     
     section .text
         mov rsi, .pageFault
-        call _print
+        call Screen._print
         jmp _haltMachine

@@ -1,27 +1,27 @@
 _________________Oasis__Interrupts__Documentation__________________
 
-The interrupts lie in the src/interrupts folder. So this folder contains
+	The interrupts are located in the src/interrupts folder. This folder contains
 
-only two folders and let's start with the second one, it's much easier to
+only two folders. 
 
-comprehend (or not maybe). Well this folder contains all of the entries of
+	Let's start with the first one, This folder contains all of 
 
-Interrupt Descriptor Table. The _loadIDT well... loads them into the 0x0
+the Interrupt Service Routines. The _loadIDT function, which is located in AsmFun, 
 
-memory point and tells the processor that it can access them in order to 
+loads them to 0x0 and tells the processor that it can access them in order to get 
 
-get interrupts running. So that's basically it! Oh... One other thing I
+interrupts running. So that's basically it! Oh... One other thing I forgot to mention: 
 
-forgot to mention: they are not the complete version of the idt gates. 
+they are not idt gates. _loadIDT function defines the gates and puts the information about 
 
-_loadIDT function also defines them and it puts the information about 
+Interrupt Service Routines position into them. These routines are called when 
 
-interrupt service routines memory position into them. These routines
+the interrupt is invoked (maybe it's the key press on the keyboard or one tick of the 
 
-are called if the interrupt is invoked (maybe it's the key press on the
+system clock or, heaven forbid, the division by 0). 
 
-keyboard or one tick of the system clock or heaven forbid the division by 0).
+	The second folder contains the interrupt gate patterns. Basically, these are just
 
-And one other thing is that these routines are stored in the second folder,
+statically allocated memory that will be used to create entries in order to store them 
 
-which is called interruptServiceRoutines.
+in the Interrupt Descriptor Table.

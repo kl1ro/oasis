@@ -4,5 +4,5 @@ section .data
 section .text
 _divisionBy0Handler:
 	mov rsi, divisionBy0
-	call _print
+	call Screen._print
 	jmp _haltMachine	

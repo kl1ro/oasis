@@ -57,7 +57,8 @@ ATA:
         ;
         ;   Memory for the hex value
         ;
-	    .ATAPortBaseHex times 5 db 0
+	    .ATAPortBaseHex times 3 db 0
+                                db 32, 0
 
     section .text
     
@@ -319,7 +320,7 @@ ATA:
             ;   Print that ata device exists
             ;
             mov rsi, .ATADeviceDetectedMessage
-            call _print
+            call Screen._print
 
             ;
             ;   Print the hex value of the port base
@@ -328,11 +329,8 @@ ATA:
             mov rdi, .ATAPortBaseHex
             mov rcx, 16
             call _intToString
-            mov rsi, rdi
-            call _add0
-            call _addSpaceCharacter
             mov rsi, .ATAPortBaseHex
-            call _print
+            call Screen._print
 
             ;
             ;   Print master/slave message
@@ -342,12 +340,12 @@ ATA:
 
             ._printMaster:
                 mov rsi, .masterMessage
-                call _print
+                call Screen._print
                 ret
 
             ._printSlave:
                 mov rsi, .slaveMessage
-                call _print
+                call Screen._print
                 ret
 
     ;
@@ -365,7 +363,7 @@ ATA:
         ;   Print look for ATA devices message
         ;
         mov rsi, .lookForATADevicesMessage
-        call _print
+        call Screen._print
 
         ;
         ;   Set the device exist flag to 0
@@ -438,7 +436,7 @@ ATA:
 
         ._printNoDevices:
             mov rsi, .noDevicesMessage
-            call _print
+            call Screen._print
             ret
 
     ;

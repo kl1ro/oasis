@@ -166,7 +166,7 @@ PCI:
         ;   Print that we're looking for devices
         ;
         mov rsi, .lookingForPCIDevices
-        call _print
+        call Screen._print
 
         ;
         ;   Registers ax, bx, cx and edx will be used as the parameters to the read functions. 
@@ -226,7 +226,7 @@ PCI:
                     ;   Print vendor id string
                     ;
                     mov rsi, .vendorIdString
-                    call _print
+                    call Screen._print
 
                     ;
                     ;   Process the vendor id and print it
@@ -237,13 +237,13 @@ PCI:
                     mov rcx, 16
                     call _intToString
                     mov rsi, .buffer
-                    call _print
+                    call Screen._print
 
                     ;
                     ;   Print the device id string
                     ;
                     mov rsi, .deviceIdString
-                    call _print 
+                    call Screen._print 
                     
                     ;
                     ;   Process the device id and print it
@@ -254,13 +254,13 @@ PCI:
                     mov rcx, 16
                     call _intToString
                     mov rsi, .buffer
-                    call _print
+                    call Screen._print
 
                     ;
                     ;   Print the line break
                     ;
                     mov rsi, lineBreak
-                    call _print
+                    call Screen._print
                 
                     ._functionsEnumerationCycleContinue:
                     inc r12w

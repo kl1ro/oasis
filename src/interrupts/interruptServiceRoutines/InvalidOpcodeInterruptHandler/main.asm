@@ -4,5 +4,5 @@ _invalidOpcodeInterruptHandler:
 
     section .text
         mov rsi, .invalidOpcode
-        call _print
+        call Screen._print
         jmp _haltMachine

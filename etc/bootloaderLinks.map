@@ -43,18 +43,19 @@ Value     Name
 
 Real              Virtual           Name
             7C00              7C00  _start
-            7C97              7C97  _start.setEntry
+            7C46              7C46  _switchToLM
+            7C97              7C97  _switchToLM.setEntry
             7CD8              7CD8  GDTLM
             7D00              7D00  GDTLM.Pointer
             7D0A              7D0A  _waitForKeyAndReboot
             7D13              7D13  _print
-            7D15              7D15  _printCycle
-            7D1E              7D1E  _diskLoad
-            7D33              7D33  _diskLoadError
-            7D3B              7D3B  _diskMismatch
-            7D49              7D49  diskLoadFailed
-            7D5B              7D5B  diskLoadComplete
-            7D6F              7D6F  diskLoadMismatch
+            7D15              7D15  _print._printCycle
+            7D1E              7D1E  readFromDiskFailed
+            7D30              7D30  readFromDiskComplete
+            7D44              7D44  readFromDiskMismatch
+            7D5C              7D5C  _readFromDisk
+            7D72              7D72  _readFromDisk._loadSuccess
+            7D86              7D86  _readFromDisk._sectorCountMatch
             7D87              7D87  _break
             7D88              7D88  _newLine
             7D95              7D95  osName

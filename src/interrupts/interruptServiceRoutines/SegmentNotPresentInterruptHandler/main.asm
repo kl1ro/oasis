@@ -5,5 +5,5 @@ _segmentNotPresentInterruptHandler:
 
     section .text
         mov rsi, .segmentNotPresent
-        call _print
+        call Screen._print
         jmp _haltMachine

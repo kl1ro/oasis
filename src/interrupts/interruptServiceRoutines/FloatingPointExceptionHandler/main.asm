@@ -4,5 +4,5 @@ _floatingPointExceptionHandler:
     
     section .text
         mov rsi, .floatingPointException
-        call _print
+        call Screen._print
         jmp _haltMachine

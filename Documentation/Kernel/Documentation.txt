@@ -1,22 +1,8 @@
 __________________Oasis__Kernel__Documentation______________________
 
 
-Well, the kernel is NOT straightforward at all and that is not my fault
+Well, the kernel still tends to be straightforward. Kernel loads all other 
 
-and I did not make it so complicated or something. Definately not! That
+modules written for this system: device drivers and AsmFunctions, and then
 
-is so complicated because of _loadIDT function. If you look at it (it lies
-
-in AsmFun project) firstly it's very hard to understand what is really 
-
-happening there and secondly too. So this function loads the idt (Inter-
-
-rupt descriptor table) just to get keyboard and clock and the other de-
-
-vices working correctly. It was horrible to program so let's forget it
-
-cause its done. It works and this is all that we want from it isn't it?
-
-Kernel also loads some device drivers and AsmFunctions and then its just 
-
-jumps to the console.
+for now just puts the machine into waiting mode.

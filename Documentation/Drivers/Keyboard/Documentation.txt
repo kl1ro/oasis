@@ -1,64 +1,58 @@
 _____________________Oasis__Keyboard__driver__Documentation_________________________
 
-This driver is much different than the screen one, because first of all this driver uses 
+Here's the list of all keyboard driver functions:
 
-a bunch of functions of the screen driver, thus its hard to analyze the output of the
-
-functions of this driver. Secondly this function output depends on the user input.
-
-List of all functions and their outputs:
+Dependency of this driver is only this file:
+	%include "<Your_path_to_Oasis>/src/drivers/keyboard/main.asm"
 
 1. _getKeyboardKey
+
+	Purpose:
+		Takes the code of the key pushed on the keyboard, prints it to the screen
+		and puts it to the user process's buffer.
+	
 	Input:
 		- nothing
+
 	Output:
-		As I said it depends on user input so:
-		
 		If [SHIFT] is pressed or released:
-			
 			- rax is 1 if pressed and 0 if released
 
 			- dx equals to keyboard data port
 
-		If [Backspace] is pressed:
-			
+		Else if [Backspace] is pressed:
 			If the cursor is on the first character of the screen:
+				- rax is modified
 
-                        	- rax is modified
+				- rbx is modified
 
-                       		- rbx is modified
+				- rcx equals to 0
 
-                        	- rcx equals to 0
+				- rdx is a number of screen data port
 
-                        	- rdx is a number of screen data port
+				- rdi equals to maximum cols * 2
 
-                        	- rdi equals to maximum cols * 2
+			Else if the cursor is on one of the rest of the characters:
+				- rax is modified
 
-                	Else if the cursor is on one of the rest of the characters:
+				- rbx is modified
 
-                        	- rax is modified
-
-                        	- rbx is modified
-
-                        	- rdx is a number of screen data port
+				- rdx is a number of screen data port
 
 		Else:
-			
 			- rax is modified
 			
-			- rbx equals to offset to the
-        	place after the last character
-                			of the string on the screen
+			- rbx equals to offset to the place after the last character
+              of the string on the screen
 
-							- rcx is modified
+			- rcx is modified
 
-							- dx equals to screen data register port number
+			- dx equals to screen data register port number
 
-	               		 	- rsi point to the end of the string
+			- rsi point to the end of the string
 
-        	       	 		- rdi equals to 0
+			- rdi equals to 0
 
-							- r8 is modified
+			- r8 is modified
 
-							- r9 equals to rsi
-
+			- r9 equals to rsi

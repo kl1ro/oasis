@@ -3,5 +3,5 @@ _stackSegmentFaultInterruptHandler:
         .stackSegmentFault db "Stack-segment fault has occured!"
     segment .text
         mov rsi, .stackSegmentFault
-        call _print
+        call Screen._print
         jmp _haltMachine

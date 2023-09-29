@@ -10,13 +10,13 @@ _startLM:
 	; to 64-bit success		
 	;
 	mov rsi, done
-	call _print
+	call Screen._print
 
 	;
 	; Print loading IDT
 	;
 	mov rsi, loadingIDT
-	call _print
+	call Screen._print
 
 	;
 	; Load IDT
@@ -27,9 +27,10 @@ _startLM:
 	; Print about loading IDT success
 	;	
 	mov rsi, done
-	call _print
-    call PCI._init
+	call Screen._print
 
+	call ATA._init
+	call PCI._init
 	jmp _chill
 
 ;
@@ -37,8 +38,8 @@ _startLM:
 ;
 %include "src/drivers/keyboard/main.asm"
 %include "src/drivers/screen/main.asm"
-%include "src/drivers/ATA/main.asm"
 %include "src/drivers/PCI/main.asm"
+%include "src/drivers/ATA/main.asm"
 
 ;
 ; Interrupt handlers
@@ -65,23 +66,15 @@ _startLM:
 ;
 ; AsmFunctions
 ;
-%include "../../AsmFun/Headers64bit/TempRes/main.asm"
 %include "../../AsmFun/Headers64bit/LoadIDT/main.asm"
 %include "../../AsmFun/Headers64bit/Memcpyq/main.asm"
 %include "../../AsmFun/Headers64bit/Break/main.asm"
-%include "../../AsmFun/Headers64bit/InterruptBreak/main.asm"
 %include "../../AsmFun/Headers64bit/HaltMachine/main.asm"
-%include "../../AsmFun/Headers64bit/Sleep/main.asm"
 %include "../../AsmFun/Headers64bit/Chill/main.asm"
-%include "../../AsmFun/Headers64bit/MinusCheck/main.asm"
+%include "../../AsmFun/Headers64bit/IntToString/main.asm"
 %include "../../AsmFun/Headers64bit/AssignFlippedIntegerPortion/main.asm"
 %include "../../AsmFun/Headers64bit/FlipString/main.asm"
-%include "../../AsmFun/Headers64bit/IntToString/main.asm"
-%include "../../AsmFun/Headers64bit/AddMinus/main.asm"
 %include "../../AsmFun/Headers64bit/Memclrb/main.asm"
-%include "../../AsmFun/Headers64bit/Add0/main.asm"
-%include "../../AsmFun/Headers64bit/AddNewLineCharacter/main.asm"
-%include "../../AsmFun/Headers64bit/AddSpaceCharacter/main.asm"
 %include "../../AsmFun/Headers64bit/Strcpy/main.asm"
 %include "../../AsmFun/Headers64bit/Pusha/main.asm"
 %include "../../AsmFun/Headers64bit/Popa/main.asm"
