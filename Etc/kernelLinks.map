@@ -1,8 +1,8 @@
 
 - NASM Map file ---------------------------------------------------------------
 
-Source file:  src/kernel/main.asm
-Output file:  build/kernel.bin
+Source file:  Src/Kernel/main.asm
+Output file:  Build/kernel.bin
 
 -- Program origin -------------------------------------------------------------
 

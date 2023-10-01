@@ -5,7 +5,7 @@ to communicate with external devices. So in this thing device is a screen. To us
 of these functions you need to use screen namespace like this: Screen._print
 
 Dependency of this driver is only this file:
-	%include "<Your_path_to_Oasis>/src/drivers/screen/main.asm"
+	%include "<Your_path_to_Oasis>/Src/Drivers/Screen/main.asm"
 
 Here's a list of all functions that can be used by system to communicate with the screen:
 

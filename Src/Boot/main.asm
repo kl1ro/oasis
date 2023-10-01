@@ -1,6 +1,6 @@
 org 0x7c00
 bits 16
-[map all etc/bootloaderLinks.map]
+[map all Etc/bootloaderLinks.map]
 
 _start:	
 	;

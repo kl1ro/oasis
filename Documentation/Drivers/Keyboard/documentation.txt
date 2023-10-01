@@ -3,7 +3,7 @@ _____________________Oasis__Keyboard__driver__Documentation_____________________
 Here's the list of all keyboard driver functions:
 
 Dependency of this driver is only this file:
-	%include "<Your_path_to_Oasis>/src/drivers/keyboard/main.asm"
+	%include "<Your_path_to_Oasis>/Src/Drivers/Keyboard/main.asm"
 
 1. _getKeyboardKey
 

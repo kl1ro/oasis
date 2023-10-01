@@ -1,8 +1,8 @@
 
 - NASM Map file ---------------------------------------------------------------
 
-Source file:  src/boot/main.asm
-Output file:  build/boot.bin
+Source file:  Src/Boot/main.asm
+Output file:  Build/boot.bin
 
 -- Program origin -------------------------------------------------------------
 

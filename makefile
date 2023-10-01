@@ -1,11 +1,11 @@
 ASM=nasm
-SRC_DIR=src
-BUILD_DIR=build
+SRC_DIR=Src
+BUILD_DIR=Build
 
 .PHONY: all floppy_image kernel bootloader image clean always
 
 #
-# Floppy image
+#	Floppy image
 #
 floppy_image: $(BUILD_DIR)/main_floppy.img
 
@@ -14,7 +14,7 @@ $(BUILD_DIR)/main_floppy.img: bootloader kernel image
 	dd if=$(BUILD_DIR)/image.bin of=$(BUILD_DIR)/main_floppy.img seek=0 count=1140 conv=notrunc
 
 #
-# Image
+#	Image
 #
 image: $(BUILD_DIR)/image.bin 
 
@@ -22,30 +22,39 @@ $(BUILD_DIR)/image.bin: always bootloader kernel
 	cat $(BUILD_DIR)/boot.bin $(BUILD_DIR)/kernel.bin > $(BUILD_DIR)/image.bin
 
 #
-# Bootloader
+#	Bootloader
 #
 bootloader: $(BUILD_DIR)/boot.bin
 
 $(BUILD_DIR)/boot.bin: always
-	$(ASM) $(SRC_DIR)/boot/main.asm -f bin -o $(BUILD_DIR)/boot.bin
+	$(ASM) $(SRC_DIR)/Boot/main.asm -f bin -o $(BUILD_DIR)/boot.bin
 
 #
-# Kernel
+#	Kernel
 #
 kernel: $(BUILD_DIR)/kernel.bin
 
 $(BUILD_DIR)/kernel.bin: always
-	$(ASM) $(SRC_DIR)/kernel/main.asm -f bin -o $(BUILD_DIR)/kernel.bin
+	$(ASM) $(SRC_DIR)/Kernel/main.asm -f bin -o $(BUILD_DIR)/kernel.bin
 
 #
-# Always
+#	Always
 #
 always:
 	mkdir -p $(BUILD_DIR)
 
 #
-# Clean
+#	Clean
 #
 clean:
 	rm -rf $(BUILD_DIR)/*
-	
+
+#
+#	ATA
+#
+ata:
+	mkdir -p $(BUILD_DIR)/ATA
+	qemu-img create -f raw $(BUILD_DIR)/ATA/hdd0.img 1M
+	qemu-img create -f raw $(BUILD_DIR)/ATA/hdd1.img 1M
+	qemu-img create -f raw $(BUILD_DIR)/ATA/hdd2.img 1M
+	qemu-img create -f raw $(BUILD_DIR)/ATA/hdd3.img 1M
