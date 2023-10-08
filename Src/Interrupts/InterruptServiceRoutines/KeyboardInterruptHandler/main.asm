@@ -1,6 +1,6 @@
 _keyboardInterruptHandler:
 	call _pusha
-	call _getKeyboardKey
+	call Keyboard._getKey
 	mov al, 20h
 	out 20h, al
 	call _popa

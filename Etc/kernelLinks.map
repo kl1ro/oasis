@@ -11,15 +11,15 @@ Output file:  Build/kernel.bin
 -- Sections (summary) ---------------------------------------------------------
 
 Vstart            Start             Stop              Length    Class     Name
-            7E00              7E00              89FE  00000BFE  progbits  .text
-            8A00              8A00              8C1D  0000021D  progbits  .data
+            7E00              7E00              8A41  00000C41  progbits  .text
+            8A44              8A44              8C63  0000021F  progbits  .data
 
 -- Sections (detailed) --------------------------------------------------------
 
 ---- Section .text ------------------------------------------------------------
 
 class:     progbits
-length:                 BFE
+length:                 C41
 start:                 7E00
 align:     not defined
 follows:   not defined
@@ -30,11 +30,11 @@ vfollows:  not defined
 ---- Section .data ------------------------------------------------------------
 
 class:     progbits
-length:                 21D
-start:                 8A00
+length:                 21F
+start:                 8A44
 align:                    4
 follows:   not defined
-vstart:                8A00
+vstart:                8A44
 valign:    not defined
 vfollows:  not defined
 
@@ -43,8 +43,8 @@ vfollows:  not defined
 ---- No Section ---------------------------------------------------------------
 
 Value     Name
-00000060  KEYBOARD_DATAPORT
-00000064  KEYBOARD_COMMANDPORT
+00000060  Keyboard.DATAPORT
+00000064  Keyboard._cOMMANDPORT
 000B8000  Screen.VIDEO_ADDRESS
 00000019  Screen.MAX_ROWS
 00000050  Screen.MAX_COLS
@@ -82,159 +82,161 @@ Value     Name
 
 Real              Virtual           Name
             7E00              7E00  _startLM
-            7E41              7E41  _getKeyboardKey
-            7E9C              7E9C  _keyboardIfShift
-            7EA4              7EA4  _keyboardElseShift
-            7EAA              7EAA  _keyboardCaseAfter
-            7EBC              7EBC  _keyboardCaseShiftPushed
-            7EC6              7EC6  _keyboardCaseShiftReleased
-            7ED0              7ED0  keyboardToAsciiSwitchTable
-            7F3C              7F3C  Screen
-            7F3C              7F3C  Screen._printAt
-            7F40              7F40  Screen._defaultCharacterStyle
-            7F42              7F42  Screen._defaultCharacterStyleAfter
-            7F5A              7F5A  Screen._ifGetCursor
-            7F5F              7F5F  Screen._getCursorAfter
-            7F66              7F66  Screen._writeCharacterCycle
-            7F74              7F74  Screen._ifNewLineCharacter
-            7F96              7F96  Screen._elseNewLineCharacter
-            7F9D              7F9D  Screen._newLineCharacterAfter
-            7FBC              7FBC  Screen._getVideomemoryOffset
-            7FD3              7FD3  Screen._getCursor
-            7FF1              7FF1  Screen._setCursor
-            8011              8011  Screen._print
-            801B              801B  Screen._clearScreen
-            802F              802F  Screen._clearScreenCycle
-            8041              8041  Screen._handleScrolling
-            806A              806A  Screen._backspace
-            809A              809A  Screen._backspacePrevLineElse
-            80A8              80A8  Screen._backspacePrevLineIf
-            80B2              80B2  Screen._backspaceCycle
-            80C2              80C2  Screen._backspaceCycleAfter
-            80CC              80CC  Screen._cursorGoRight
-            80F3              80F3  Screen._cursorGoLeft
-            8118              8118  Screen._cursorGoUp
-            8131              8131  Screen._cursorGoDown
-            814B              814B  PCI
-            814B              814B  PCI._readFromFunction
-            815B              815B  PCI._writeToFunction
-            816D              816D  PCI._deviceHasFunctions
-            817B              817B  PCI._getId
-            818F              818F  PCI._init
-            81A2              81A2  PCI._busesEnumerationCycle
-            81B1              81B1  PCI._devicesEnumerationCycle
-            81D3              81D3  PCI._ifDeviceHasFunctions
-            81DA              81DA  PCI._elseDeviceHasFunctions
-            81DF              81DF  PCI._functionsEnumerationCycle
-            8291              8291  PCI._functionsEnumerationCycleContinue
-            829A              829A  PCI._functionsEnumerationCycleReturn
-            82A3              82A3  PCI._devicesEnumerationCycleReturn
-            82AC              82AC  ATA
-            82AC              82AC  ATA._identify
-            82B0              82B0  ATA._ifTalkToMasterIdentify
-            82B4              82B4  ATA._ifTalkToSlaveIdentify
-            82B6              82B6  ATA._ifTalkToReturnIdentify
-            82D9              82D9  ATA._ifNoDevice
-            82DC              82DC  ATA._elseNoDevice
-            8302              8302  ATA._waitForDevice
-            8312              8312  ATA._waitStatusConfirmed
-            8315              8315  ATA._waitForDeviceReturn
-            831E              831E  ATA._identifyReadCycle
-            8325              8325  ATA._checkATAPort
-            8335              8335  ATA._ifATADeviceExists
-            8372              8372  ATA._printMaster
-            8382              8382  ATA._printSlave
-            8392              8392  ATA._init
-            840A              840A  ATA._printNoDevices
-            841A              841A  ATA._read
-            841E              841E  ATA._ifTalkToMasterRead
-            8422              8422  ATA._ifTalkToSlaveRead
-            8424              8424  ATA._ifTalkToReturnRead
-            8460              8460  ATA._waitForDeviceRead
-            8474              8474  ATA._waitStatusConfirmedRead
-            8477              8477  ATA._waitForDeviceReturnRead
-            8481              8481  ATA._readCycle
-            8494              8494  ATA._ifOddAfterReadCycle
-            8498              8498  ATA._ifOddAfterReadCycleReturn
-            849B              849B  ATA._write
-            849F              849F  ATA._ifTalkToMasterWrite
-            84A3              84A3  ATA._ifTalkToSlaveWrite
-            84A5              84A5  ATA._ifTalkToReturnWrite
-            84E8              84E8  ATA._writeCycle
-            84F6              84F6  ATA._flush
-            84FA              84FA  ATA._ifTalkToMasterFlush
-            84FE              84FE  ATA._ifTalkToSlaveFlush
-            8500              8500  ATA._ifTalkToReturnFlush
-            850F              850F  ATA._waitForDeviceFlush
-            851F              851F  ATA._waitStatusConfirmedFlush
-            8522              8522  ATA._waitForDeviceReturnFlush
-            8525              8525  ATA._error
-            8528              8528  _divisionBy0Handler
-            853C              853C  _invalidOpcodeInterruptHandler
-            8550              8550  _deviceNotAvailableInterruptHandler
-            8564              8564  _invalidTSSInterruptHandler
-            8578              8578  _segmentNotPresentInterruptHandler
-            858C              858C  _stackSegmentFaultInterruptHandler
-            85A0              85A0  _generalProtectionFaultInterruptHandler
-            85B4              85B4  _pageFaultInterruptHandler
-            85C8              85C8  _floatingPointExceptionHandler
-            85DC              85DC  _keyboardInterruptHandler
-            85F1              85F1  _clockInterruptHandler
-            85F7              85F7  _syscallHandler
-            8600              8600  syscallTable
-            8610              8610  IDTInterruptGatePattern
-            8620              8620  _sysRead
-            8620              8620  _loadIDT
-            8851              8851  _loadIDTCycle
-            886E              886E  _defineIDTInterruptGate
-            8888              8888  IDTPointer
-            8892              8892  _memcpyq
-            88A3              88A3  _break
-            88A4              88A4  _haltMachine
-            88A6              88A6  _chill
-            88A9              88A9  temp
-            88BD              88BD  _intToString
-            88CC              88CC  _intToString._notNegative
-            890E              890E  _assignFlippedIntegerPortion
-            8919              8919  _assignFlippedIntegerPortionIf
-            891E              891E  _assignFlippedIntegerPortionElse
-            8921              8921  _assignFlippedIntegerPortionAfter
-            892D              892D  _flipString
-            8930              8930  _flipString._flipStringCycle1
-            8939              8939  _flipString._flipStringCycle2
-            8949              8949  _memclrb
-            8953              8953  _strcpy
-            8967              8967  _pusha
-            89C4              89C4  _popa
-            89E5              89E5  done
-            89EC              89EC  lineBreak
-            89EE              89EE  loadingIDT
+            7E41              7E41  Keyboard
+            7E41              7E41  Keyboard._getKey
+            7ED7              7ED7  Keyboard._keyboardIfShift
+            7EDF              7EDF  Keyboard._keyboardElseShift
+            7EE5              7EE5  Keyboard.default
+            7EF7              7EF7  Keyboard._caseShiftPushed
+            7F01              7F01  Keyboard._caseShiftReleased
+            7F0B              7F0B  Keyboard.keyboardToAsciiSwitchTable
+            7F78              7F78  Screen
+            7F78              7F78  Screen._printAt
+            7F7C              7F7C  Screen._defaultCharacterStyle
+            7F7E              7F7E  Screen._defaultCharacterStyleAfter
+            7F96              7F96  Screen._ifGetCursor
+            7F9B              7F9B  Screen._getCursorAfter
+            7FA2              7FA2  Screen._writeCharacterCycle
+            7FB0              7FB0  Screen._ifNewLineCharacter
+            7FD2              7FD2  Screen._elseNewLineCharacter
+            7FD9              7FD9  Screen._newLineCharacterAfter
+            7FF8              7FF8  Screen._getVideomemoryOffset
+            800F              800F  Screen._getCursor
+            802D              802D  Screen._setCursor
+            804D              804D  Screen._print
+            8057              8057  Screen._clearScreen
+            806B              806B  Screen._clearScreenCycle
+            807D              807D  Screen._handleScrolling
+            80A6              80A6  Screen._backspace
+            80D6              80D6  Screen._backspacePrevLineElse
+            80E4              80E4  Screen._backspacePrevLineIf
+            80EE              80EE  Screen._backspaceCycle
+            80FE              80FE  Screen._backspaceCycleAfter
+            8108              8108  Screen._cursorGoRight
+            812F              812F  Screen._cursorGoLeft
+            8154              8154  Screen._cursorGoUp
+            816D              816D  Screen._cursorGoDown
+            8187              8187  PCI
+            8187              8187  PCI._readFromFunction
+            8197              8197  PCI._writeToFunction
+            81A9              81A9  PCI._deviceHasFunctions
+            81B7              81B7  PCI._getId
+            81CB              81CB  PCI._init
+            81DE              81DE  PCI._busesEnumerationCycle
+            81ED              81ED  PCI._devicesEnumerationCycle
+            820F              820F  PCI._ifDeviceHasFunctions
+            8216              8216  PCI._elseDeviceHasFunctions
+            821B              821B  PCI._functionsEnumerationCycle
+            82CD              82CD  PCI._functionsEnumerationCycleContinue
+            82D6              82D6  PCI._functionsEnumerationCycleReturn
+            82DF              82DF  PCI._devicesEnumerationCycleReturn
+            82E8              82E8  ATA
+            82E8              82E8  ATA._identify
+            82EC              82EC  ATA._ifTalkToMasterIdentify
+            82F0              82F0  ATA._ifTalkToSlaveIdentify
+            82F2              82F2  ATA._ifTalkToReturnIdentify
+            8315              8315  ATA._ifNoDevice
+            8318              8318  ATA._elseNoDevice
+            833E              833E  ATA._waitForDevice
+            834E              834E  ATA._waitStatusConfirmed
+            8351              8351  ATA._waitForDeviceReturn
+            835A              835A  ATA._identifyReadCycle
+            8361              8361  ATA._checkATAPort
+            8371              8371  ATA._ifATADeviceExists
+            83AE              83AE  ATA._printMaster
+            83BE              83BE  ATA._printSlave
+            83CE              83CE  ATA._init
+            8446              8446  ATA._printNoDevices
+            8456              8456  ATA._read
+            845A              845A  ATA._ifTalkToMasterRead
+            845E              845E  ATA._ifTalkToSlaveRead
+            8460              8460  ATA._ifTalkToReturnRead
+            849C              849C  ATA._waitForDeviceRead
+            84B0              84B0  ATA._waitStatusConfirmedRead
+            84B3              84B3  ATA._waitForDeviceReturnRead
+            84BD              84BD  ATA._readCycle
+            84D0              84D0  ATA._ifOddAfterReadCycle
+            84D4              84D4  ATA._ifOddAfterReadCycleReturn
+            84D7              84D7  ATA._write
+            84DB              84DB  ATA._ifTalkToMasterWrite
+            84DF              84DF  ATA._ifTalkToSlaveWrite
+            84E1              84E1  ATA._ifTalkToReturnWrite
+            8524              8524  ATA._writeCycle
+            8532              8532  ATA._flush
+            8536              8536  ATA._ifTalkToMasterFlush
+            853A              853A  ATA._ifTalkToSlaveFlush
+            853C              853C  ATA._ifTalkToReturnFlush
+            854B              854B  ATA._waitForDeviceFlush
+            855B              855B  ATA._waitStatusConfirmedFlush
+            855E              855E  ATA._waitForDeviceReturnFlush
+            8561              8561  ATA._error
+            8564              8564  _divisionBy0Handler
+            8578              8578  _invalidOpcodeInterruptHandler
+            858C              858C  _deviceNotAvailableInterruptHandler
+            85A0              85A0  _invalidTSSInterruptHandler
+            85B4              85B4  _segmentNotPresentInterruptHandler
+            85C8              85C8  _stackSegmentFaultInterruptHandler
+            85DC              85DC  _generalProtectionFaultInterruptHandler
+            85F0              85F0  _pageFaultInterruptHandler
+            8604              8604  _floatingPointExceptionHandler
+            8618              8618  _keyboardInterruptHandler
+            862D              862D  _clockInterruptHandler
+            8633              8633  _syscallHandler
+            863C              863C  syscallTable
+            864C              864C  IDTInterruptGatePattern
+            865C              865C  _sysRead
+            865C              865C  _loadIDT
+            888D              888D  _loadIDTCycle
+            88AA              88AA  _defineIDTInterruptGate
+            88C4              88C4  IDTPointer
+            88CE              88CE  _memcpyq
+            88DF              88DF  _break
+            88E0              88E0  _haltMachine
+            88E2              88E2  _chill
+            88E5              88E5  _memset
+            88EC              88EC  temp
+            8900              8900  _intToString
+            890F              890F  _intToString._notNegative
+            8951              8951  _assignFlippedIntegerPortion
+            895C              895C  _assignFlippedIntegerPortionIf
+            8961              8961  _assignFlippedIntegerPortionElse
+            8964              8964  _assignFlippedIntegerPortionAfter
+            8970              8970  _flipString
+            8973              8973  _flipString._flipStringCycle1
+            897C              897C  _flipString._flipStringCycle2
+            898C              898C  _memclrb
+            8996              8996  _strcpy
+            89AA              89AA  _pusha
+            8A07              8A07  _popa
+            8A28              8A28  done
+            8A2F              8A2F  lineBreak
+            8A31              8A31  loadingIDT
 
 ---- Section .data ------------------------------------------------------------
 
 Real              Virtual           Name
-            8A00              8A00  shiftFlag
-            8A01              8A01  keyboardBuffer
-            8A03              8A03  inputCounter
-            8A04              8A04  inputBuffer
-            8A05              8A05  PCI.lookingForPCIDevices
-            8A1F              8A1F  PCI.buffer
-            8A25              8A25  PCI.vendorIdString
-            8A35              8A35  PCI.deviceIdString
-            8A41              8A41  PCI.classAndSubclassIdsString
-            8A5A              8A5A  ATA.ATADeviceDetectedMessage
-            8A7A              8A7A  ATA.lookForATADevicesMessage
-            8A94              8A94  ATA.noDevicesMessage
-            8AAF              8AAF  ATA.slaveMessage
-            8AB6              8AB6  ATA.masterMessage
-            8ABE              8ABE  ATA.ATAPortBaseHex
-            8AC3              8AC3  divisionBy0
-            8AEB              8AEB  _invalidOpcodeInterruptHandler.invalidOpcode
-            8B1C              8B1C  _deviceNotAvailableInterruptHandler.deviceNotAvailable
-            8B38              8B38  _invalidTSSInterruptHandler.invalidTSS
-            8B52              8B52  _segmentNotPresentInterruptHandler.segmentNotPresent
-            8BA1              8BA1  _stackSegmentFaultInterruptHandler.stackSegmentFault
-            8BC1              8BC1  _generalProtectionFaultInterruptHandler.generalProtectionFault
-            8BE3              8BE3  _pageFaultInterruptHandler.pageFault
-            8BF7              8BF7  _floatingPointExceptionHandler.floatingPointException
+            8A44              8A44  Keyboard.shiftFlag
+            8A45              8A45  Keyboard.buffer
+            8A49              8A49  Keyboard.inputCounter
+            8A4A              8A4A  Keyboard.inputBuffer
+            8A4B              8A4B  PCI.lookingForPCIDevices
+            8A65              8A65  PCI.buffer
+            8A6B              8A6B  PCI.vendorIdString
+            8A7B              8A7B  PCI.deviceIdString
+            8A87              8A87  PCI.classAndSubclassIdsString
+            8AA0              8AA0  ATA.ATADeviceDetectedMessage
+            8AC0              8AC0  ATA.lookForATADevicesMessage
+            8ADA              8ADA  ATA.noDevicesMessage
+            8AF5              8AF5  ATA.slaveMessage
+            8AFC              8AFC  ATA.masterMessage
+            8B04              8B04  ATA.ATAPortBaseHex
+            8B09              8B09  divisionBy0
+            8B31              8B31  _invalidOpcodeInterruptHandler.invalidOpcode
+            8B62              8B62  _deviceNotAvailableInterruptHandler.deviceNotAvailable
+            8B7E              8B7E  _invalidTSSInterruptHandler.invalidTSS
+            8B98              8B98  _segmentNotPresentInterruptHandler.segmentNotPresent
+            8BE7              8BE7  _stackSegmentFaultInterruptHandler.stackSegmentFault
+            8C07              8C07  _generalProtectionFaultInterruptHandler.generalProtectionFault
+            8C29              8C29  _pageFaultInterruptHandler.pageFault
+            8C3D              8C3D  _floatingPointExceptionHandler.floatingPointException
 

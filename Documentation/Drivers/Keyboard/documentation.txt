@@ -1,11 +1,13 @@
 _____________________Oasis__Keyboard__driver__Documentation_________________________
 
-Here's the list of all keyboard driver functions:
+To use any of these functions you need to use namespace like this: Keyboard._getKey
 
 Dependency of this driver is only this file:
 	%include "<Your_path_to_Oasis>/Src/Drivers/Keyboard/main.asm"
 
-1. _getKeyboardKey
+Here's the list of all keyboard driver functions:
+
+1. _getKey
 
 	Purpose:
 		Takes the code of the key pushed on the keyboard, prints it to the screen

@@ -71,6 +71,7 @@ _startLM:
 %include "../../AsmFun/Headers64bit/Break/main.asm"
 %include "../../AsmFun/Headers64bit/HaltMachine/main.asm"
 %include "../../AsmFun/Headers64bit/Chill/main.asm"
+%include "../../AsmFun/Headers64bit/Memset/main.asm"
 %include "../../AsmFun/Headers64bit/IntToString/main.asm"
 %include "../../AsmFun/Headers64bit/AssignFlippedIntegerPortion/main.asm"
 %include "../../AsmFun/Headers64bit/FlipString/main.asm"
