@@ -62,16 +62,6 @@ Keyboard:
 		xor rax, rax
 		mov dx, .DATAPORT
 		in al, dx
-		mov rdi, .buffer
-		mov rcx, 10
-		call _intToString
-		mov rsi, .buffer
-		mov [rdi], byte 10
-		call Screen._print
-		mov rdi, .buffer
-		mov rcx, 4
-		call _memclrb
-		ret
 
 		;
 		;	Then we need to check all of the cases of key codes
@@ -138,11 +128,11 @@ Keyboard:
 		jz ._keyboardElseShift
 		
 		._keyboardIfShift:
-			mov al, [.keyboardToAsciiSwitchTable + rax + 55]	
+			mov al, [.keyboardToAsciiTable + rax + 55]	
 			jmp .default
 
 		._keyboardElseShift:
-			mov al, [.keyboardToAsciiSwitchTable + rax - 1]
+			mov al, [.keyboardToAsciiTable + rax - 1]
 
 		;
 		;	Default case, in which we just print the key
@@ -186,11 +176,11 @@ Keyboard:
 		;
 		;	Keyboard codes to ascii convertion table
 		;
-		.keyboardToAsciiSwitchTable: 
+		.keyboardToAsciiTable: 
 			;
-			;    Esc(1)  1(2)  2(3)  3(4)  4(5)  5(6)  6(7)  7(8)  8(9)  9(10)  0(11)  -(12)  (13)   Backspace(14)  Tab(15)
-			;    |       |     |     |     |     |     |     |     |     |      |      |      |      |              |
-			db   0,      49,   50,   51,   52,   53,   54,   55,   56,   57,    48,    45,    61,    0,             0  
+			;    Esc(1)  1(2)  2(3)  3(4)  4(5)  5(6)  6(7)  7(8)  8(9)  9(10)  0(11)  -(12)  =(13)   Backspace(14)  Tab(15)
+			;    |       |     |     |     |     |     |     |     |     |      |      |      |       |              |
+			db   0,      49,   50,   51,   52,   53,   54,   55,   56,   57,    48,    45,    61,     0,             0
 			
 			;
 			;    q(16)  w(17)  e(18)  r(19)  t(20)  y(21)  u(22)  i(23)  o(24)  p(25)  [(26)  ](27)  Enter(28)  Left Ctrl(29)
@@ -203,6 +193,31 @@ Keyboard:
 			db   97,    115,   100,   102,   103,   104,   106,   107,   108,   59,    39
 			
 			;
-			;    `(41)  Shift(42) \(43)
+			;    `(41)  Left Shift(42)  \(43)  z(44)  x(45)  c(46)  v(47)  b(48)  n(49)  m(50)  ,(51)  .(52)  /(53)
+			;    |      |               |      |      |      |      |      |      |      |      |      |      |
+			db   96,    0,              0,     122,   120,   99,    118,   98,    110,   109,   44,    46,    47
+			
 			;
-			db   96, 0, 0, 122, 120, 99, 118, 98, 110, 109, 44, 46, 47, 0, 0, 0, 32, 33, 64, 35, 36, 37, 94, 38, 42, 40, 41, 95, 43, 0, 0, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 123, 125, 10, 0, 65, 83, 68, 70, 71, 72, 74, 75, 76, 58, 34, 0, 0, 0, 90, 88, 67, 86, 66, 78, 77, 60, 62, 63
+			;    Right Shift(54)     Alt(56)  Space(57) 
+			;    |                   |        |
+			db   0,               0, 0,       32
+
+			;
+			;    !(42 + 2)  @(42 + 3)  #(42 + 4)  $(42 + 5)  %(42 + 6)  ^(42 + 7)  &(42 + 8)  *(42 + 9)  ((42 + 10)  )(42 + 11)  _(42 + 12)  +(42 + 13)  Backspace(42 + 14)  Tab(42 + 15)
+			;    |          |          |          |          |          |          |          |          |           |           |           |           |                   |
+			db   33,        64,        35,        36,        37,        94,        38,        42,        40,         41,         95,         43,         0,                  0
+
+			;
+			;    Q(42 + 16)  W(42 + 17)  E(42 + 18)  R(42 + 19)  T(42 + 20)  Y(42 + 21)  U(42 + 22)  I(42 + 23)  O(42 + 24)  P(42 + 25)  {(42 + 26): }(42 + 27)
+			;    |           |           |           |           |           |           |           |           |           |           |           |
+			db   81,         87,         69,         82,         84,         89,         85,         73,         79,         80,         123,        125, 
+			
+			;
+			;    Enter(42 + 28)  Ctrl(42 + 29)  A(42 + 30)  S(42 + 31)  D(42 + 32)  F(42 + 33)  G(42 + 34)  H(42 + 35)  J(42 + 36)  K(42 + 37)  L(42 + 38)  :(42 + 39)  "(42 + 40)
+			;    |               |              |           |           |           |           |           |           |           |           |           |           |
+			db   10,             0,             65,         83,         68,         70,         71,         72,         74,         75,         76,         58,         34
+			
+			;
+			;    ~(42 + 41)  Left Shift(42 + 42)  |(42 + 43)  Z(42 + 44)  X(42 + 45)  C(42 + 46)  V(42 + 47)  B(42 + 48)  N(42 + 49)  M(42 + 50)  <(42 + 51)  >(42 + 52)  ?(42 + 53)
+			;    |           |                    |           |           |           |           |           |           |           |           |           |           |
+			db   126,        0,                   124,        90,         88,         67,         86,         66,         78,         77,         60,         62,         63
