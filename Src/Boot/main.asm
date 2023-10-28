@@ -80,17 +80,17 @@ _start:
 ;
 ;	Switch to long mode and jump into the kernel
 ;
-%include "../../AsmFun/Headers16bit/SwitchToLM/main.asm"
-%include "../../AsmFun/Headers16bit/GDTLM/main.asm"
+%include "../AsmFun/Headers16bit/SwitchToLM/main.asm"
+%include "../AsmFun/Headers16bit/GDTLM/main.asm"
 
 ;
 ;	16-bit AsmFunctions
 ;
-%include "../../AsmFun/Headers16bit/WaitForKeyAndReboot/main.asm"
-%include "../../AsmFun/Headers16bit/Print/main.asm"
-%include "../../AsmFun/Headers16bit/ReadFromDisk/main.asm"
-%include "../../AsmFun/Headers64bit/Break/main.asm"
-%include "../../AsmFun/Headers16bit/NewLine/main.asm"
+%include "../AsmFun/Headers16bit/WaitForKeyAndReboot/main.asm"
+%include "../AsmFun/Headers16bit/Print/main.asm"
+%include "../AsmFun/Headers16bit/ReadFromDisk/main.asm"
+%include "../AsmFun/Headers64bit/Break/main.asm"
+%include "../AsmFun/Headers16bit/NewLine/main.asm"
 
 ;
 ;	Define some usefull constants
