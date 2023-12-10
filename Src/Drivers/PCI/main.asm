@@ -275,7 +275,7 @@ PCI:
             jmp ._busesEnumerationCycle
 
 section .data
-    .lookingForPCIDevices db "Looking for PCI devices:", 10, 0
+    .lookingForPCIDevices db 10, "Looking for PCI devices:", 10, 0
     .buffer times 4 db "0"
                     db 32, 0
     .vendorIdString db "    Vendor id: ", 0

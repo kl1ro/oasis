@@ -33,7 +33,7 @@ _start:
 	int 10h
 
 	;
-	;	Print osName
+	;	Print os name
 	;
 	mov si, osName
 	call _print
@@ -47,7 +47,7 @@ _start:
 	call _print
 
 	;
-	;	Load the kernel from a drive. ax is a hardcoded value and we need
+	;	Load the kernel from a drive. Note that ax is a hardcoded value and we need
 	;	to restore dx cause it is most likely overwritten by _newLine
 	;
 	pop dx

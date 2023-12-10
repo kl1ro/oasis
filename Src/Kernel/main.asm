@@ -6,35 +6,54 @@ section .text
 
 _startLM:	
 	;
-	; Printing about switching 
-	; to 64-bit success		
+	;	Printing about switching to 64-bit success		
 	;
 	mov rsi, done
 	call Screen._print
 
 	;
-	; Print loading IDT
+	;	Print loading IDT
 	;
 	mov rsi, loadingIDT
 	call Screen._print
 
 	;
-	; Load IDT
-	; 	
+	;	Load IDT
+	;		
 	call _loadIDT	
 
 	;
-	; Print about loading IDT success
+	;	Print about loading IDT success
 	;	
 	mov rsi, done
 	call Screen._print
 
+	;
+	;	Iniitialize the subsystems
+	;
 	call ATA._init
 	call PCI._init
+
+	;
+	;	Copy message to the sector
+	;
+	mov rsi, message
+	mov rdi, sector
+	call _strcpy
+
+	;
+	;	Write the message to the disk
+	;
+	mov rsi, sector
+	mov rdi, ATA.port0Base
+	xor ebx, ebx
+	mov al, 1
+	call ATA._write
+
 	jmp _chill
 
 ;
-; Drivers
+;	Drivers
 ;
 %include "Src/Drivers/Keyboard/main.asm"
 %include "Src/Drivers/Screen/main.asm"
@@ -42,7 +61,7 @@ _startLM:
 %include "Src/Drivers/ATA/main.asm"
 
 ;
-; Interrupt handlers
+;	Interrupt handlers
 ;
 %include "Src/Interrupts/InterruptServiceRoutines/DivisionBy0InterruptHandler/main.asm"
 %include "Src/Interrupts/InterruptServiceRoutines/InvalidOpcodeInterruptHandler/main.asm"
@@ -59,12 +78,12 @@ _startLM:
 %include "Src/Interrupts/Resources/IDTInterruptGatePattern/main.asm"
 
 ;
-; Syscalls
+;	Syscalls
 ;
 %include "Src/Syscalls/SysRead/main.asm"
 
 ;
-; AsmFunctions
+;	AsmFunctions
 ;
 %include "../AsmFun/Headers64bit/LoadIDT/main.asm"
 %include "../AsmFun/Headers64bit/Memcpyq/main.asm"
@@ -81,8 +100,10 @@ _startLM:
 %include "../AsmFun/Headers64bit/Popa/main.asm"
 
 ;
-; Strings
+;	Strings
 ;
 done db "Done!", 10, 0
 lineBreak db 10, 0
 loadingIDT db "Loading IDT... ", 0
+sector times 512 db 0
+message db "This is a message that will be written to the disk", 0

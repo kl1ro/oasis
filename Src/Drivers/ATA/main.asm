@@ -1,21 +1,14 @@
 ;
-;   Here I try to use the label as the 
-;   namespace and that's kinda funny.
-;   Let's see if it will work.
-;   If you see this, it does.
+;   Here I try to use the label as the namespace and that's kinda funny.
+;   Let's see if it will work. If you see this, it does.
 ;
 ATA:
-
     ;
-    ;   So this will be an easy ATA driver
-    ;   that only use the 28 bit PIO method. 
-    ;   Maybe I will implement the DMA 
-    ;   in the future, who knows...
+    ;   So this will be an easy ATA driver that only use the 28 bit PIO method. 
+    ;   Maybe I will implement the DMA in the future, who knows...
     ;
-    ;   These are the ports that are used 
-    ;   to communicate with the Advanced Technology 
-    ;   Attachment chip. All ports are 8 bit 
-    ;   except the data one, it is 16 bit:
+    ;   These are the ports that are used to communicate with the Advanced Technology 
+    ;   Attachment chip. All ports are 8 bit except the data one, it is 16 bit:
     ;
     .port0Base equ 0x1f0
     .port1Base equ 0x170
@@ -47,34 +40,28 @@ ATA:
     ;
     ;   Some driver messages
     ;
-    section .data
-        .ATADeviceDetectedMessage db "    ATA device detected at bus ", 0
-        .lookForATADevicesMessage db "Looking for ATA devices:", 10, 0
-        .noDevicesMessage db "    No devices were found", 10, 0
-        .slaveMessage db "Slave", 10, 0
-        .masterMessage db "Master", 10, 0
+    .ATADeviceDetectedMessage db "    ATA device detected at bus ", 0
+    .lookForATADevicesMessage db 10, "Looking for ATA devices:", 10, 0
+    .noDevicesMessage db "    No devices were found", 10, 0
+    .slaveMessage db "Slave", 10, 0
+    .masterMessage db "Master", 10, 0
 
-        ;
-        ;   Memory for the hex value
-        ;
-	    .ATAPortBaseHex times 3 db 0
-                                db 32, 0
-
-    section .text
-    
     ;
-    ;   This function initializes the communication
-    ;   between the cpu and the ata adapter
+    ;   Memory for the hex value
+    ;
+    .ATAPortBaseHex times 3 db 0
+                            db 32, 0
+
+    ;
+    ;   This function initializes the communication between the cpu and the ata adapter
     ;
     ;   Input:
     ;       - rsi as the ata port base
     ;
-    ;       - al as the master or slave 
-    ;       (1 if master, else 0)
+    ;       - al as the master or slave (1 if master, else 0)
     ;
     ;   Output:
-    ;       - al is 1 if everything worked fine
-    ;         otherwise it will be 0
+    ;       - al is 1 if everything worked fine otherwise it will be 0
     ;
     ;       - bl is equal to 0xa0 or 0xb0
     ;
@@ -84,9 +71,7 @@ ATA:
     ;
     ._identify:
         ;
-        ;   First we need to tell the ata adapter
-        ;   that we need to talk to the master or 
-        ;   to the slave
+        ;   First we need to tell the ata adapter that we need to talk to the master or to the slave
         ;
         ;   Check who we want to talk to
         ;

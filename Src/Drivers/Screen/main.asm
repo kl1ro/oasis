@@ -1,8 +1,7 @@
 ;
 ;	Let's define some constants to simplify our code.
 ;
-;	And let's make it clear: the screen memory starts 
-;	from 0xb8000 and ends at 0xb8f9f
+;	And let's make it clear: the screen memory starts from 0xb8000 and ends at 0xb8f9f
 ;
 Screen:
 	.VIDEO_ADDRESS equ 0xb8000
@@ -17,8 +16,7 @@ Screen:
 	.REG_SCREEN_DATA equ 0x3d5
 
 	;
-	;	Prints a string to the screen 
-	;	at the specific row and colomn position
+	;	Prints a string to the screen at the specific row and colomn position
 	;
 	;	Input: 
 	;		- rsi is a pointer to the string
@@ -32,8 +30,7 @@ Screen:
 	;	Output:
 	;		- rax is modified
 	;
-	;		- rbx equals to offset to the place after the last character
-	;		of the string on the screen
+	;		- rbx equals to offset to the place after the last character of the string on the screen
 	;
 	;		- cx equals to 0
 	;
@@ -49,8 +46,7 @@ Screen:
 	;
 	._printAt:
 		;
-		;	If style is black on black, we give it our default style
-		;	which is gray on black
+		;	If style is black on black, we give it our default style which is gray on black
 		;
 		test ah, ah
 		jnz ._defaultCharacterStyleAfter
@@ -62,9 +58,8 @@ Screen:
 			;
 			;	Then we need to calculate memory position to put our first character to.
 			;
-			;	Firstly, we check if row and colomn are positive. If they're not we 
-			;	gotta get our cursor position and write the character after that. Well,
-			;	if they are then we need to specify the offset in memory.
+			;	Firstly, we check if row and colomn are positive. If they're not we gotta get our cursor position 
+			;	and write the character after that. Well, if they are then we need to specify the offset in memory.
 			;
 			;	rbx here is an offset from start of the video memory.
 			;
@@ -82,7 +77,6 @@ Screen:
 			jl ._ifGetCursor
 			cmp cl, 0
 			jl ._ifGetCursor
-			
 			call ._getVideomemoryOffset
 			jmp ._getCursorAfter	
 
@@ -279,8 +273,7 @@ Screen:
 	;
 	;		- al equals to 0
 	;
-	;		- rbx equals to offset to the place after the last character
-	;		of the string on the screen
+	;		- rbx equals to offset to the place after the last character of the string on the screen
 	;
 	;		- cx equals to 0
 	;
