@@ -1,6 +1,6 @@
 org 0x7c00
 bits 16
-[map all Etc/bootloaderLinks.map]
+[map all "etc/boot-links.map"]
 
 _start:	
 	;
@@ -80,17 +80,21 @@ _start:
 ;
 ;	Switch to long mode and jump into the kernel
 ;
-%include "../AsmFun/Headers16bit/SwitchToLM/main.asm"
-%include "../AsmFun/Headers16bit/GDTLM/main.asm"
+%include "../asmfun/16/switch-to-lm.asm"
 
 ;
-;	16-bit AsmFunctions
+;	16-bit Asmfun-ctions
 ;
-%include "../AsmFun/Headers16bit/WaitForKeyAndReboot/main.asm"
-%include "../AsmFun/Headers16bit/Print/main.asm"
-%include "../AsmFun/Headers16bit/ReadFromDisk/main.asm"
-%include "../AsmFun/Headers64bit/Break/main.asm"
-%include "../AsmFun/Headers16bit/NewLine/main.asm"
+%include "../asmfun/16/gdtlm.asm"
+%include "../asmfun/16/wait-for-key-and-reboot.asm"
+%include "../asmfun/16/print.asm"
+%include "../asmfun/16/read-from-disk.asm"
+%include "../asmfun/16/new-line.asm"
+
+;
+;	64-bit Asmfun-ctions
+;
+%include "../asmfun/64/break.asm"
 
 ;
 ;	Define some usefull constants

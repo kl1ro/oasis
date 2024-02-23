@@ -1,33 +1,34 @@
 ASM=nasm
-SRC_DIR=Src
-BUILD_DIR=Build
+SRC_DIR=src
+BUILD_DIR=build
 
-.PHONY: all floppy_image kernel bootloader image clean always
-
-#
-#	Floppy image
-#
-floppy_image: $(BUILD_DIR)/main_floppy.img
-
-$(BUILD_DIR)/main_floppy.img: bootloader kernel image
-	dd if=/dev/zero of=$(BUILD_DIR)/main_floppy.img bs=1024 count=1440
-	dd if=$(BUILD_DIR)/image.bin of=$(BUILD_DIR)/main_floppy.img seek=0 count=1140 conv=notrunc
+.PHONY: all build kernel boot truncated clean always
 
 #
-#	Image
+#	Build image
 #
-image: $(BUILD_DIR)/image.bin 
+build: $(BUILD_DIR)/build.img
 
-$(BUILD_DIR)/image.bin: always bootloader kernel
-	cat $(BUILD_DIR)/boot.bin $(BUILD_DIR)/kernel.bin > $(BUILD_DIR)/image.bin
+$(BUILD_DIR)/build.img: always boot kernel truncated
+	dd if=/dev/zero of=$(BUILD_DIR)/build.img bs=1024 count=1440
+	dd if=$(BUILD_DIR)/truncated.bin of=$(BUILD_DIR)/build.img seek=0 count=1140 conv=notrunc
+	rm $(BUILD_DIR)/boot.bin $(BUILD_DIR)/kernel.bin $(BUILD_DIR)/truncated.bin
 
 #
-#	Bootloader
+#	Truncated image
 #
-bootloader: $(BUILD_DIR)/boot.bin
+truncated: $(BUILD_DIR)/truncated.bin 
+
+$(BUILD_DIR)/truncated.bin: always boot kernel
+	cat $(BUILD_DIR)/boot.bin $(BUILD_DIR)/kernel.bin > $(BUILD_DIR)/truncated.bin
+
+#
+#	Boot
+#
+boot: $(BUILD_DIR)/boot.bin
 
 $(BUILD_DIR)/boot.bin: always
-	$(ASM) $(SRC_DIR)/Boot/main.asm -f bin -o $(BUILD_DIR)/boot.bin
+	$(ASM) $(SRC_DIR)/boot.asm -f bin -o $(BUILD_DIR)/boot.bin
 
 #
 #	Kernel
@@ -35,26 +36,26 @@ $(BUILD_DIR)/boot.bin: always
 kernel: $(BUILD_DIR)/kernel.bin
 
 $(BUILD_DIR)/kernel.bin: always
-	$(ASM) $(SRC_DIR)/Kernel/main.asm -f bin -o $(BUILD_DIR)/kernel.bin
+	$(ASM) $(SRC_DIR)/kernel.asm -f bin -o $(BUILD_DIR)/kernel.bin
 
 #
 #	Always
 #
 always:
 	mkdir -p $(BUILD_DIR)
+	
+#
+#	ATA
+#
+ata:
+	mkdir -p $(BUILD_DIR)/ata
+	qemu-img create -f raw $(BUILD_DIR)/ata/hdd0.img 1M
+	qemu-img create -f raw $(BUILD_DIR)/ata/hdd1.img 1M
+	qemu-img create -f raw $(BUILD_DIR)/ata/hdd2.img 1M
+	qemu-img create -f raw $(BUILD_DIR)/ata/hdd3.img 1M
 
 #
 #	Clean
 #
 clean:
 	rm -rf $(BUILD_DIR)/*
-
-#
-#	ATA
-#
-ata:
-	mkdir -p $(BUILD_DIR)/ATA
-	qemu-img create -f raw $(BUILD_DIR)/ATA/hdd0.img 1M
-	qemu-img create -f raw $(BUILD_DIR)/ATA/hdd1.img 1M
-	qemu-img create -f raw $(BUILD_DIR)/ATA/hdd2.img 1M
-	qemu-img create -f raw $(BUILD_DIR)/ATA/hdd3.img 1M

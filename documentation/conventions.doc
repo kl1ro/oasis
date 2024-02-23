@@ -1,0 +1,17 @@
+_____________________Oasis__Conventions__Documentation_________________________
+
+Here's the list of all conventions used in this operating system source tree:
+	- All files and folders are named like this: this-is-the-folder and this-is-the-file.asm
+	
+	- Functions are named like this: _print
+
+	- Variables are named like this: someVariable
+
+	- Namespaces are named like this: SomeNamespace
+
+	- Comments are written like this:
+		;
+		;	Comment
+		;
+	
+	- There can't be a directory that serves only for one file. Nesting is reduced as much as possible.

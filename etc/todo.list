@@ -1,0 +1,13 @@
+Todo list for the Oasis operating system:
+
+1. Done! Write a bootloader that reads the kernel from a disk and jumps to 64-bit protected mode.
+2. 1/2 Done... Write drivers for diskdrive, screen, keyboard, flashdrives.
+3. Done! Enable paging and usermode.
+4. Write POSIX-like syscalls.
+5. Write process scheduler 
+6. Write a filesystem (firstly, that will be fat). 
+7. Write a console (something like bash).
+
+...
+
+999. Write my own filesystem. Before that moment I use a fat12 filesystem.
