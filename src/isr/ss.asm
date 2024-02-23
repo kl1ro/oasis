@@ -4,4 +4,4 @@ _stackSegmentFaultInterruptHandler:
     segment .text
         mov rsi, .stackSegmentFault
         call Screen._print
-        jmp _haltMachine
+        jmp _halt

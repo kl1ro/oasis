@@ -1,6 +1,6 @@
 org 0x7e00
 bits 64
-[map all "etc/kernel-links.map"]
+[map all etc/kernel-links.map]
 
 section .text
 
@@ -107,7 +107,7 @@ _startLM:
 %include "../asmfun/64/chill.asm"
 %include "../asmfun/64/memset.asm"
 %include "../asmfun/64/itoa.asm"
-%include "../asmfun/64/get-flipped-integer-portion.asm"
+%include "../asmfun/64/itofa.asm"
 %include "../asmfun/64/flipstr.asm"
 %include "../asmfun/64/memclrb.asm"
 %include "../asmfun/64/strcpy.asm"

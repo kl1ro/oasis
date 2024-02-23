@@ -313,7 +313,7 @@ ATA:
             mov rax, r10
             mov rdi, .ATAPortBaseHex
             mov rcx, 16
-            call _intToString
+            call _itoa
             mov rsi, .ATAPortBaseHex
             call Screen._print
 

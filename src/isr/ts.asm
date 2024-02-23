@@ -5,4 +5,4 @@ _invalidTSSInterruptHandler:
     section .text
         mov rsi, .invalidTSS
         call Screen._print
-        jmp _haltMachine
+        jmp _halt

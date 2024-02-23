@@ -235,7 +235,7 @@ PCI:
                     and eax, 0xffff
                     mov rdi, .buffer
                     mov rcx, 16
-                    call _intToString
+                    call _itoa
                     mov rsi, .buffer
                     call Screen._print
 
@@ -252,7 +252,7 @@ PCI:
                     shr eax, 16
                     mov rdi, .buffer
                     mov rcx, 16
-                    call _intToString
+                    call _itoa
                     mov rsi, .buffer
                     call Screen._print
 

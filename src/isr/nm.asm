@@ -5,4 +5,4 @@ _deviceNotAvailableInterruptHandler:
     section .text
         mov rsi, .deviceNotAvailable
         call Screen._print
-        jmp _haltMachine
+        jmp _halt

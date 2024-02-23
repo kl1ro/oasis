@@ -5,4 +5,4 @@ section .text
 _divisionBy0Handler:
 	mov rsi, divisionBy0
 	call Screen._print
-	jmp _haltMachine	
+	jmp _halt	
