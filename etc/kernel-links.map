@@ -82,40 +82,40 @@ Value     Name
 
 Real              Virtual           Name
             7E00              7E00  _startLM
-            7EB9              7EB9  Keyboard
-            7EB9              7EB9  Keyboard._getKey
-            7F14              7F14  Keyboard._keyboardIfShift
-            7F1C              7F1C  Keyboard._keyboardElseShift
-            7F22              7F22  Keyboard.default
-            7F34              7F34  Keyboard._caseShiftPushed
-            7F3E              7F3E  Keyboard._caseShiftReleased
-            7F48              7F48  Keyboard.keyboardToAsciiTable
-            7FB5              7FB5  Screen
-            7FB5              7FB5  Screen._printAt
-            7FB9              7FB9  Screen._defaultCharacterStyle
-            7FBB              7FBB  Screen._defaultCharacterStyleAfter
-            7FD3              7FD3  Screen._ifGetCursor
-            7FD8              7FD8  Screen._getCursorAfter
-            7FDF              7FDF  Screen._writeCharacterCycle
-            7FED              7FED  Screen._ifNewLineCharacter
-            800F              800F  Screen._elseNewLineCharacter
-            8016              8016  Screen._newLineCharacterAfter
-            8035              8035  Screen._getVideomemoryOffset
-            804C              804C  Screen._getCursor
-            806A              806A  Screen._setCursor
-            808A              808A  Screen._print
+            7EBB              7EBB  Keyboard
+            7EBB              7EBB  Keyboard._getKey
+            7F16              7F16  Keyboard._keyboardIfShift
+            7F1E              7F1E  Keyboard._keyboardElseShift
+            7F24              7F24  Keyboard.default
+            7F36              7F36  Keyboard._caseShiftPushed
+            7F40              7F40  Keyboard._caseShiftReleased
+            7F4A              7F4A  Keyboard.keyboardToAsciiTable
+            7FB7              7FB7  Screen
+            7FB7              7FB7  Screen._printAt
+            7FBB              7FBB  Screen._defaultCharacterStyle
+            7FBD              7FBD  Screen._defaultCharacterStyleAfter
+            7FD5              7FD5  Screen._ifGetCursor
+            7FDA              7FDA  Screen._getCursorAfter
+            7FE1              7FE1  Screen._writeCharacterCycle
+            7FEF              7FEF  Screen._ifNewLineCharacter
+            8011              8011  Screen._elseNewLineCharacter
+            8018              8018  Screen._newLineCharacterAfter
+            8037              8037  Screen._getVideomemoryOffset
+            804E              804E  Screen._getCursor
+            806C              806C  Screen._setCursor
+            808C              808C  Screen._print
             8094              8094  Screen._clearScreen
             80A8              80A8  Screen._clearScreenCycle
             80BA              80BA  Screen._handleScrolling
-            80E3              80E3  Screen._backspace
-            8113              8113  Screen._backspacePrevLineElse
-            8121              8121  Screen._backspacePrevLineIf
-            812B              812B  Screen._backspaceCycle
-            813B              813B  Screen._backspaceCycleAfter
-            8145              8145  Screen._cursorGoRight
-            816C              816C  Screen._cursorGoLeft
-            8191              8191  Screen._cursorGoUp
-            81AA              81AA  Screen._cursorGoDown
+            80E3              80E3  Screen._eraseBackwards
+            8113              8113  Screen._eraseBackwardsPrevLineElse
+            8121              8121  Screen._eraseBackwardsPrevLineIf
+            812B              812B  Screen._eraseBackwardsCycle
+            813B              813B  Screen._eraseBackwardsCycleAfter
+            8145              8145  Screen._moveCursorRight
+            816C              816C  Screen._moveCursorLeft
+            8191              8191  Screen._moveCursorUp
+            81AA              81AA  Screen._moveCursorDown
             81C4              81C4  PCI
             81C4              81C4  PCI._readFromFunction
             81D4              81D4  PCI._writeToFunction
@@ -147,7 +147,7 @@ Real              Virtual           Name
             83F5              83F5  ATA._waitStatusConfirmed
             83F8              83F8  ATA._waitForDeviceReturn
             8401              8401  ATA._identifyReadCycle
-            8408              8408  ATA._checkATAPort
+            8408              8408  ATA._checkPort
             8418              8418  ATA._ifATADeviceExists
             8455              8455  ATA._printMaster
             8465              8465  ATA._printSlave

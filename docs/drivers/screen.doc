@@ -1,147 +1,97 @@
-______________________Oasis_screen_driver_Documentation__________________________
+______________________Oasis_Screen_Driver_Documentation__________________________
 
-My vision of driver is that driver is a software that gives the system more functions
-to communicate with external devices. So in this thing device is a screen. To use any
-of these functions you need to use screen namespace like this: Screen._print
+To use any of these functions you need to use screen namespace like this: call Screen._print
 
 Dependency of this driver is only this file:
-	%include "<Your_path_to_Oasis>/Src/Drivers/Screen/main.asm"
+	%include "<Your_path_to_Oasis>/src/drivers/screen.asm"
 
 Here's a list of all functions that can be used by system to communicate with the screen:
 
 1. _printAt:
-
 	Purpose:
-		This function prints a string at the colomn and row on the screen
+		This function prints a string at the specified colomn and row on the screen
 
 	Input:
 		- rsi is a pointer to string
-
 		- ah is a style of the characters in a string
-
 		- cl is a row position
-
 		- ch is a colomn position
 
 	Output:
-		- ah remains the same
-	
-		- al equals to 0
-
-		- rbx equals to offset to the place after the last character 
-		of the string on the screen
-
-		- cx equals to 0
-
+		- al and cx are equal to 0
+		- rbx and r8 are equal to offset to the place after the last character of the string on the screen
 		- dx equals to screen data register port number
-
-		- rsi point to the end of the string
-
+		- rsi and r9 point to the end of the string
 		- rdi is modified
 
-		- r8 equals to rbx
-		
-		- r9 equals to rsi
-
 2. _getVideomemoryOffset
-
 	Purpose:
 		Calculates the offset in video memory of some row-colomn position on a screen.
 	
 	Input:
-		- cl = row position
-
-		- ch = colomn position
+		- cl is a row position
+		- ch is a col position
 
 	Output:
 		- ax equals to the offset of the character from the video memory
-
 		- di equals to maximum colomns on the screen
-	
 		- cl equals to the colomn position from the video memory
-
 		- dx equals to 0
 
 3. _getCursor
-
 	Purpose:
-		It gets the position of the cursor from the video card and converts
+		Gets the position of the cursor from the screen and converts
 		this position into the offset from the start of the video memory.
 
 	Input:
-		- absolutly nothing
+		- nothing
 
 	Output:
 		- ax equals to the offset from video memory
-
 		- dx equals to the screen data register port number
 
 4. _setCursor
-
 	Purpose:
-		It sets the cursor to the screen on some offset from video memory
+		Sets the cursor to the screen by the offset from the start of the video memory.
 
 	Input:
-		- bx is an offset (thus it needs to be even)
+		- bx is an offset (needs to be even because each text cell on the screen is two bytes in memory)
 
 	Output:
 		- al equals to low byte of bx
-	
 		- bx equals to offset / 2
-
 		- dx equals to the screen data register port number
 
 5. _print
-
 	Purpose:
-		This is the simplified _printAt function that gives more convinient
+		This is the simplified _printAt function that gives a more convinient
 		way to call it. With this function you don't have to use cx register
 		if you want just print text on the current cursor position.
 
 	Input:
 		- rsi as a pointer to string
-
 		- ah is characters style
 
 	Output:
-		- ah remains the same
-		
 		- al equals to 0
-
-		- rbx equals to offset to the place after the last character
-		of the string on the screen
-
-		- rcx is modified
-
+		- rbx and r8 are equal to offset to the place after the last character of the string on the screen
+		- rcx and rdi are modified
 		- dx equals to screen data register port number
-
-		- rsi point to the end of the string
-
-		- rdi is modified
-
-		- r8 equals to rbx
-
-		- r9 equals to rsi
+		- rsi and r9 point to the end of the string
 
 6. _clearScreen
-
 	Purpose: 
-		this simply clears the screen and sets the cursor position to (0, 0).
+		This simply clears the screen and sets the cursor position to (0, 0).
 
 	Input:
 		- nothing at all
 
 	Output:
 		- rax is modified
-
-		- rbx equals to 0
-	
+		- rbx and rcx are equal to 0
 		- dx equals to screen data register port number
-		
-		- rcx equals to 0
 
 7. _handleScrolling
-
 	Purpose: 
 		If offset is more than 0xfa0 then it puts all strings on the screen backwards by 1
 
@@ -150,17 +100,12 @@ Here's a list of all functions that can be used by system to communicate with th
 	
 	Output:
 		- rax is modified
-	
 		- rbx remains the same if it is not equal to 0xfa0 else it equals 0xf00
-
 		- rcx equals to 0 if rbx = 0xfa0
-
 		- rsi points to the last string on the screen
-
 		- rdi points to the last string + 1 on the screen
 
-8. _backspace
-
+8. _eraseBackwards
 	Purpose: 
 		It deletes the previous character and sets the cursor to that position
 
@@ -169,29 +114,17 @@ Here's a list of all functions that can be used by system to communicate with th
 
 	Output:
 		If the cursor is on the first character of the screen:
-			
-			- rax is modified
-
-			- rbx is modified
-
+			- rax and rbx are modified
 			- rcx equals to 0
-
 			- rdx is a number of screen data port
-
 			- rdi equals to maximum cols * 2
 
 		Else if the cursor is on one of the rest of the characters:
-		
-			- rax is modified
-	
-			- rbx is modified
-
+			- rax and rbx are modified
 			- rdx is a number of screen data port
-
 			- rdi equals to maximum cols * 2
 
-9. _cursorGoRight
-
+9. _moveCursorRight
 	Purpose:
 		This function increments the current cursor position by one.
 
@@ -201,26 +134,19 @@ Here's a list of all functions that can be used by system to communicate with th
 	Output:
 		If it was not the last character of the string then:
 			- al equals to low byte of bx
-
 			- bx equals to offset / 2
-
 			- dx equals to the screen data register port number
-
 			- di equals to MAX_COLS * 2
  
         Else:
 			- ax equals to the cursor offset
-			
 			- dx equals to MAX_COLS * 2 - 2
-
 			- di equals to MAX_COLS * 2
-
 			- bx equals to the cursor offset
 
-10. _cursorGoLeft
-
+10. _moveCursorLeft
 	Purpose:
-		This function decrements the current cursor position by one.		
+		Decrements the current cursor position by one.		
 	
 	Input:
 		- nothing
@@ -228,24 +154,17 @@ Here's a list of all functions that can be used by system to communicate with th
 	Output:
 		If it was not the first character of the string then:
 			- al equals to low byte of bx
-
 			- bx equals to offset / 2
-
 			- dx equals to the screen data register port number
-
 			- di equals to MAX_COLS * 2
  
         Else:
 			- ax equals to the cursor offset
-							
 			- dx equals to 0
-
 			- di equals to MAX_COLS * 2
-
 			- bx equals to the cursor offset
 
-11. _cursorGoUp
-
+11. _moveCursorUp
 	Purpose:
 		This function puts the cursor up by one
 
@@ -255,24 +174,17 @@ Here's a list of all functions that can be used by system to communicate with th
 	Output:
 		If it was not the first string of the screen then:
 			- al equals to low byte of bx
-
 			- bx equals to offset / 2
-
 			- dx equals to the screen data register port number
-
 			- di is equal to MAX_COLS * 2
 
         Else:
 			- ax equals to the offset from video memory
-
 			- dx equals to screen data register port number
-
 			- bx is modified
-
 			- di is equal to MAX_COLS * 2
 
-12. _cursorGoDown
-
+12. _moveCursorDown
 	Purpose:
 		This function puts the cursor down by one
 
@@ -282,18 +194,12 @@ Here's a list of all functions that can be used by system to communicate with th
 	Output:
 		If it was not the last string of the screen then:
 			- al equals to low byte of bx
-
 			- bx equals to offset / 2
-
 			- dx equals to the screen data register port number
-
 			- di is equal to MAX_COLS * 2
  
         Else:
 			- ax equals to the offset from video memory
-
 			- dx equals to screen data register port number
-
 			- bx is modified
-
 			- di is equal to MAX_COLS * 2

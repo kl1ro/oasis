@@ -288,7 +288,6 @@ Screen:
 	;		- r9 equals to rsi
 	;
 	._print:
-		xor ah, ah
 		mov ch, -1
 		call ._printAt
 		ret
@@ -375,7 +374,7 @@ Screen:
 	;
 	;		- di equals to maximum colomns of the screen * 2
 	;
-	._backspace:
+	._eraseBackwards:
 		xor rbx, rbx
 		xor rax, rax
 		call ._getCursor
@@ -388,27 +387,27 @@ Screen:
 		shl di, 1
 		div di
 		cmp dx, .MAX_COLS * 2 - 2
-		je ._backspacePrevLineIf
+		je ._eraseBackwardsPrevLineIf
 		
-		._backspacePrevLineElse:
+		._eraseBackwardsPrevLineElse:
 			mov al, 32	
 			mov [.VIDEO_ADDRESS + rbx], al
 			call ._setCursor
 			ret
 
-		._backspacePrevLineIf:
+		._eraseBackwardsPrevLineIf:
 			mov al, [.VIDEO_ADDRESS + rbx]
 			cmp al, 32
-			jne ._backspacePrevLineElse
+			jne ._eraseBackwardsPrevLineElse
 
-			._backspaceCycle:
+			._eraseBackwardsCycle:
 				mov al, [.VIDEO_ADDRESS + rbx]
 				cmp al, 32
-				jne ._backspaceCycleAfter
+				jne ._eraseBackwardsCycleAfter
 				sub bx, 2
-				jmp ._backspaceCycle
+				jmp ._eraseBackwardsCycle
 
-			._backspaceCycleAfter:
+			._eraseBackwardsCycleAfter:
 				add rbx, 2
 				call ._setCursor
 				ret
@@ -438,7 +437,7 @@ Screen:
 	;
 	;			- bx equals to the cursor offset
 	;
-	._cursorGoRight:
+	._moveCursorRight:
 		call ._getCursor
 		xor dx, dx
 		mov di, .MAX_COLS * 2
@@ -476,7 +475,7 @@ Screen:
 	;
 	;			- bx equals to the cursor offset
 	;
-	._cursorGoLeft:
+	._moveCursorLeft:
 		call ._getCursor
 		xor dx, dx
 		mov di, .MAX_COLS * 2
@@ -513,7 +512,7 @@ Screen:
 	;
 	;			- di is equal to MAX_COLS * 2		
 	;
-	._cursorGoUp:
+	._moveCursorUp:
 		call ._getCursor
 		mov bx, ax
 		mov di, .MAX_COLS * 2
@@ -547,7 +546,7 @@ Screen:
 	;
 	;			- di is equal to MAX_COLS * 2           
 	;
-	._cursorGoDown:
+	._moveCursorDown:
 		call ._getCursor
 		mov bx, ax
 		mov di, .MAX_COLS * 2

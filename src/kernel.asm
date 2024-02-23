@@ -64,6 +64,7 @@ _startLM:
 	call ATA._read
 
 	mov rsi, sector
+	mov ah, 0xcf
 	call Screen._print
 
 	jmp _chill

@@ -280,7 +280,7 @@ ATA:
     ;   Output:
     ;       - every single register up to r12 is modified
     ;
-    ._checkATAPort:
+    ._checkPort:
         ;
         ;	Save ATA port base and master/slave bit
         ;
@@ -340,8 +340,7 @@ ATA:
     ;       - nothing
     ;
     ;   Output:
-    ;       - every single register from rax to r12 
-    ;       is modified
+    ;       - every single register up to r12 is modified
     ;
     ._init:
         ;
@@ -360,56 +359,56 @@ ATA:
         ;
         mov rsi, .port0Base
         mov al, 1
-        call ._checkATAPort
+        call ._checkPort
 
         ;
         ;   Check port 0 Slave
         ;
         mov rsi, .port0Base
         xor al, al
-        call ._checkATAPort
+        call ._checkPort
 
         ;
         ;   Check port 1 Master
         ;
         mov rsi, .port1Base
         mov al, 1
-        call ._checkATAPort
+        call ._checkPort
 
         ;
         ;   Check port 1 Slave
         ;
         mov rsi, .port1Base
         xor al, al
-        call ._checkATAPort
+        call ._checkPort
 
         ;
         ;   Check port 2 Master
         ;
         mov rsi, .port2Base
         mov al, 1
-        call ._checkATAPort
+        call ._checkPort
 
         ;
         ;   Check port 2 Slave
         ;
         mov rsi, .port2Base
         xor al, al
-        call ._checkATAPort
+        call ._checkPort
 
         ;
         ;   Check port 3 Master
         ;
         mov rsi, .port3Base
         mov al, 1
-        call ._checkATAPort
+        call ._checkPort
 
         ;
         ;   Check port 3 Slave
         ;
         mov rsi, .port3Base
         xor al, al
-        call ._checkATAPort
+        call ._checkPort
 
         ;
         ;   If there were no devices, we
@@ -425,8 +424,7 @@ ATA:
             ret
 
     ;
-    ;   Reads the sector of a disk 
-    ;   being pointed by lba
+    ;   Reads the sector of a disk being pointed by lba
     ;
     ;   Input:
     ;       - rsi as a port base
@@ -647,8 +645,6 @@ ATA:
         ;   that we need to talk to the master or 
         ;   to the slave
         ;
-
-        ;
         ;   Check who we want to talk to
         ;
         test al, al
@@ -664,8 +660,7 @@ ATA:
         ._ifTalkToReturnWrite:
 
         ;
-        ;   Take the last 4 bits of the sector 
-        ;   and put it to the device port
+        ;   Take the last 4 bits of the sector and put them to the device port
         ;
         mov r8d, ebx
         shr r8d, 24
@@ -678,8 +673,7 @@ ATA:
         add dx, .devicePortOffset
 
         ;
-        ;   Tell the ata adapter who we want to talk to
-        ;   and tell the last 4 lba bits
+        ;   Tell the ata adapter who we want to talk to and tell it the 4 last lba bits
         ;
         out dx, al
 
@@ -755,7 +749,6 @@ ATA:
         ;   Calculate the data port
         ;
         mov dx, di
-        
         mov rcx, .bytesPerSector / 2
         
         ;

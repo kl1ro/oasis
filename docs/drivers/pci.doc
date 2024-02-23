@@ -1,0 +1,7 @@
+__________________Oasis__PCI_Driver__Documentation______________________
+To use any of these functions you need to use pci namespace like this: call PCI._init
+
+Dependency of this driver is only this file:
+	%include "<Your_path_to_Oasis>/src/drivers/pci.asm"
+
+Here's a list of all functions that can be used by system to communicate with the pci:

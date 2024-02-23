@@ -1,17 +1,15 @@
 _____________________Oasis__Keyboard__driver__Documentation_________________________
 
-To use any of these functions you need to use namespace like this: Keyboard._getKey
+To use any of these functions you need to use namespace like this: call Keyboard._getKey
 
 Dependency of this driver is only this file:
-	%include "<Your_path_to_Oasis>/Src/Drivers/Keyboard/main.asm"
+	%include "<Your_path_to_Oasis>/src/drivers/keyboard.asm"
 
 Here's the list of all keyboard driver functions:
 
 1. _getKey
-
 	Purpose:
-		Takes the code of the key pushed on the keyboard, prints it to the screen
-		and puts it to the user process's buffer.
+		Takes the code of the key pushed/released on the keyboard and prints it to the screen.
 	
 	Input:
 		- nothing
@@ -19,42 +17,23 @@ Here's the list of all keyboard driver functions:
 	Output:
 		If [SHIFT] is pressed or released:
 			- rax is 1 if pressed and 0 if released
-
 			- dx equals to keyboard data port
 
 		Else if [Backspace] is pressed:
 			If the cursor is on the first character of the screen:
-				- rax is modified
-
-				- rbx is modified
-
+				- rax and rbx are modified
 				- rcx equals to 0
-
 				- rdx is a number of screen data port
-
 				- rdi equals to maximum cols * 2
 
 			Else if the cursor is on one of the rest of the characters:
-				- rax is modified
-
-				- rbx is modified
-
+				- rax and rbx are modified
 				- rdx is a number of screen data port
 
 		Else:
-			- rax is modified
-			
-			- rbx equals to offset to the place after the last character
-              of the string on the screen
-
-			- rcx is modified
-
+			- rax, rcx and r8 are modified
+			- rbx equals to offset to the place after the last character of the string on the screen
 			- dx equals to screen data register port number
-
-			- rsi point to the end of the string
-
+			- rsi points to the end of the string
 			- rdi equals to 0
-
-			- r8 is modified
-
 			- r9 equals to rsi

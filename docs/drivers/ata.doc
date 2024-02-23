@@ -1,0 +1,70 @@
+__________________Oasis__ATA__Documentation______________________
+
+To use any of these functions you need to use ata namespace like this: call ATA._write
+
+Dependency of this driver is only this file:
+	%include "<Your_path_to_Oasis>/src/drivers/ata.asm"
+
+Here's a list of all functions that can be used by system to communicate with the ata:
+
+_identify:
+	Purpose:
+		Initializes the communication between the cpu and the ata adapter
+
+	Input:
+		- rsi as the ata port base
+		- al as the master or slave (1 if master, else 0)
+	
+	Output:
+		- al is 1 if everything worked fine otherwise it will be 0
+		- bl is equal to 0xa0 or 0xb0
+		- rdx and rcx are modified
+
+_checkPort:
+	Purpose:
+		Checks if the ATA port exists and print to the screen if it does
+
+	Input:
+		- rsi as a port base
+		- al as master/slave bit
+	
+	Output:
+		- every single register up to r12 is modified
+
+_init:
+	Purpose:
+		Looks for ATA devices and prints to the screen if they exist
+
+	Input:
+		- nothing
+	
+	Output:
+		- every single register up to r12 is modified
+	
+_read:
+	Purpose:
+		Reads the sector of a disk being pointed by lba
+
+	Input:
+		- rsi as a port base
+		- ebx as the 28 bit lba address
+		- rdi as a pointer to memory
+		- rcx as the number of bytes to read
+		- al as the master/slave bit
+
+	Output:
+		- al is 1 if everything worked fine, else 0
+		- ebx, rdi, rcx and r8 are modified
+
+_write:
+	Purpose:
+		Writes 512 bytes from memory being pointed by rsi to sector pointed by lba
+	
+	Input:
+		- rdi as a port base
+		- ebx as the 28 bit lba address
+		- rsi as a pointer to memory
+		- al as the master/slave bit
+	
+	Output:
+		

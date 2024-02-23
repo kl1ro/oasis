@@ -75,7 +75,7 @@ Keyboard:
 		;	Backspace
 		;
 		cmp al, 14
-		je Screen._backspace
+		je Screen._eraseBackwards
 			
 		;
 		;	Shift pushed
@@ -97,25 +97,25 @@ Keyboard:
 		;	Right pressed
 		;
 		cmp al, 77
-		je Screen._cursorGoRight
+		je Screen._moveCursorRight
 
 		;
 		;	Up pressed
 		;
 		cmp al, 72
-		je Screen._cursorGoUp
+		je Screen._moveCursorUp
 
 		;
 		;	Left pressed
 		;
 		cmp al, 75
-		je Screen._cursorGoLeft
+		je Screen._moveCursorLeft
 
 		;
 		;	Down pressed
 		;
 		cmp al, 80
-		je Screen._cursorGoDown
+		je Screen._moveCursorDown
 
 		;
 		;	If the key is released, we just break, except for the shift key.

@@ -1,7 +1,5 @@
 ____________________Oasis__Bootloader__Documentation__________________
 
 The bootloader is very straightforward. Firstly it sets up the data and stack segments,
-
 sets the video mode to 80x25, then it loads the kernel and if everything worked
-
 fine, it enters the Long Mode (64-bit mode) and jumps into the kernel.

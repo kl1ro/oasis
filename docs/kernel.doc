@@ -1,8 +1,5 @@
 __________________Oasis__Kernel__Documentation______________________
 
-
-Well, the kernel still tends to be straightforward. Kernel loads all other 
-
-modules written for this system: device drivers and AsmFunctions, and then
-
-for now just puts the machine into waiting mode.
+Well, the kernel tends to be straightforward. Kernel loads all other 
+modules written for this system: device drivers and Asmfun-ctions, and then
+for now just puts the machine into the waiting mode.
