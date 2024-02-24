@@ -29,8 +29,32 @@ _startLM:
 	; Initialize the filesystem
 	call Filesystem._init
 
+	; Print the volume label
+	mov rsi, Filesystem.label
+	xor ah, ah
+	call Screen._print
+
 	; Print the number of bytes per sector
 	mov rax, [Filesystem.bytesPerSector]
+	mov rdi, buffer
+	mov rcx, 10
+	call _itoa
+	mov rsi, buffer
+	xor ah, ah
+	call Screen._print
+
+	; Print the space
+	mov rsi, space
+	xor ah, ah
+	call Screen._print
+
+	; Clear the buffer
+	mov rdi, buffer
+	mov rcx, 8
+	call _memclrb
+
+	; Print the volume label
+	mov rax, [Filesystem.sectorsPerCluster]
 	mov rdi, buffer
 	mov rcx, 10
 	call _itoa
@@ -86,5 +110,6 @@ _startLM:
 ; Strings
 done db "Done!", 10, 0
 lineBreak db 10, 0
+space db 32, 0
 loadingIDT db "Loading IDT... ", 0
 buffer times 10 db 0
