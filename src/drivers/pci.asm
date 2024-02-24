@@ -1,8 +1,5 @@
 PCI:
-    ;
-    ;   Alright... Let's enumerate the ports being used to communicate with the
-    ;   PCI controller. They are 32-bit each.
-    ;
+    ; Let's enumerate the ports being used to communicate with the PCI controller. They are 32-bit each.
     .dataPort equ 0xcfc
     .commandPort equ 0xcf8
 
@@ -11,83 +8,49 @@ PCI:
     ;
     ;   Input:
     ;       - ax as the bus number
-    ;
     ;       - bx as the device number
-    ;
     ;       - cx as the function number
-    ;
     ;       - edx as the register offset (needs to be a multiple of 4)
     ;
     ;   Output:
     ;       - eax stores the device function data
-    ;
-    ;       - bx is modified
-    ;
-    ;       - cx is modified
-    ;
-    ;       - edx is modified 
+    ;       - bx, cx and edx are modified 
     ;
     ._readFromFunction:
-        ;
-        ;   Get the function id
-        ;
+        ; Get the function id
         call ._getId
 
-        ;
-        ;   Tell the PCI which function 
-        ;   we want to read
-        ;
+        ; Tell the PCI which function we want to read
         mov dx, .commandPort
         out dx, eax
 
-        ;
-        ;   Read the device function
-        ;
+        ; Read the device function
         mov dx, .dataPort
         in eax, dx
         ret
 
     ;
-    ;   This function writes to function
+    ;   This function writes to the PCI function
     ;
     ;   Input:
     ;       - ax as the bus number
-    ;
     ;       - bx as the device number
-    ;
     ;       - cx as the function number
-    ;
     ;       - edx as the register offset
-    ;
     ;       - esi as the value we want to write
     ;
     ;   Output:
-    ;       - eax is modified
-    ;
-    ;       - bx is modified
-    ;
-    ;       - cx is modified
-    ;
-    ;       - edx is modified       
-    ;
-    ;       - esi remains the same
+    ;       - eax, bx, cx, edx are modified       
     ;
     ._writeToFunction:
-        ;   
-        ;   Get the function id   
-        ;
+        ; Get the function id   
         call ._getId
 
-        ;
-        ;   Tell the PCI which function
-        ;   we want to write to
-        ;
+        ; Tell the PCI which function we want to write to
         mov dx, .commandPort
         out dx, eax
 
-        ;
-        ;   And then write to function
-        ;
+        ; And then write to function
         mov dx, .dataPort
         mov eax, esi
         out dx, eax
@@ -98,30 +61,21 @@ PCI:
     ;
     ;   Input:
     ;       - ax as the bus number
-    ;
     ;       - bx as the device number
     ;
     ;   Output:
     ;       - bit 7 of eax is set if the device has any function
-    ;
-    ;       - bx is modified
-    ;
-    ;       - cx is modified
-    ;
-    ;       - edx is modified                
+    ;       - bx, cx and edx are modified                
     ;
     ._deviceHasFunctions:
-        ;
-        ;   Prepare the registers to _readFromFunction command and call it
-        ;
-        ;   Function number is 0
-        ;
+        ; Prepare the registers to _readFromFunction command and call it
+
+        ; Function number is 0
         xor cx, cx
 
-        ;
-        ;   Register offset is 0x0e
-        ;
+        ; Register offset is 0x0e
         mov edx, 0x0e
+
         call ._readFromFunction
         ret
 
@@ -131,21 +85,13 @@ PCI:
     ;
     ;   Input:
     ;       - ax as the bus number
-    ;
     ;       - bx as the device number
-    ;
     ;       - cx as the function number
-    ;
     ;       - edx as the register offset
     ;
     ;   Output:
     ;       - eax stores the function id
-    ;
-    ;       - bx is modified
-    ;
-    ;       - cx is modified
-    ;
-    ;       - edx is modified
+    ;       - bx, cx, edx is modified
     ;
     ._getId:
         shl eax, 16
@@ -161,21 +107,23 @@ PCI:
     ;   This function enumerates the devices connected to the PCI and prints their data
     ;   to the screen
     ;
+	;	Input:
+	;		- nothing
+	;
+	;	Output:
+	;		- All registers up to r14 are used
+	;
     ._init:
-        ;
-        ;   Print that we're looking for devices
-        ;
+        ; Print that we're looking for devices
         mov rsi, .lookingForPCIDevices
         call Screen._print
 
-        ;
-        ;   Registers ax, bx, cx and edx will be used as the parameters to the read functions. 
-        ;   So we need to store the iteration counters in the other registers, e.g. r10w, r11w, r12w. 
-        ;   Then r10w is the bus number, r11w is the device number and r12w is function number. 
-        ;   The reason we use exactly these registers is because print function uses all registers up to r9
-        ;
-        ;   First things first we start the enumeration cycles
-        ;
+        ; Registers ax, bx, cx and edx will be used as the parameters to the read functions. 
+        ; So we need to store the iteration counters in the other registers, e.g. r10w, r11w, r12w. 
+        ; Then r10w is the bus number, r11w is the device number and r12w is function number. 
+        ; The reason we use exactly these registers is because print function uses all registers up to r9
+
+        ; First things first we start the enumeration cycles
         xor r10w, r10w 
 
         ._busesEnumerationCycle:
@@ -187,9 +135,7 @@ PCI:
                 cmp r11w, 32
                 je ._devicesEnumerationCycleReturn
                 
-                ;
-                ;   Check if the device has functions and start the cycle only one time if it doesn't
-                ;
+                ; Check if the device has functions and start the cycle only one time if it doesn't
                 xor r12w, r12w
                 mov ax, r10w
                 mov bx, r11w
@@ -208,9 +154,7 @@ PCI:
                     cmp r12w, r13w
                     je ._functionsEnumerationCycleReturn 
 
-                    ;
-                    ;   Read the device function vendor and device ids, save them in r14d
-                    ;
+                    ; Read the device function vendor and device ids, save them in r14d
                     mov ax, r10w
                     mov bx, r11w
                     mov cx, r12w
@@ -222,15 +166,11 @@ PCI:
                     jz ._functionsEnumerationCycleContinue
                     mov r14d, eax
 
-                    ;
-                    ;   Print vendor id string
-                    ;
+                    ; Print vendor id string
                     mov rsi, .vendorIdString
                     call Screen._print
 
-                    ;
-                    ;   Process the vendor id and print it
-                    ;
+                    ; Process the vendor id and print it
                     mov eax, r14d
                     and eax, 0xffff
                     mov rdi, .buffer
@@ -239,15 +179,11 @@ PCI:
                     mov rsi, .buffer
                     call Screen._print
 
-                    ;
-                    ;   Print the device id string
-                    ;
+                    ; Print the device id string
                     mov rsi, .deviceIdString
                     call Screen._print 
                     
-                    ;
-                    ;   Process the device id and print it
-                    ;
+                    ; Process the device id and print it
                     mov eax, r14d
                     shr eax, 16
                     mov rdi, .buffer
@@ -256,9 +192,7 @@ PCI:
                     mov rsi, .buffer
                     call Screen._print
 
-                    ;
-                    ;   Print the line break
-                    ;
+                    ; Print the line break
                     mov rsi, lineBreak
                     call Screen._print
                 

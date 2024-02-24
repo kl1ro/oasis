@@ -54,7 +54,7 @@ _read:
 
 	Output:
 		- al is 1 if everything worked fine, else 0
-		- ebx, rdi, rcx and r8 are modified
+		- ebx, dx, rdi, rcx and r8 are modified
 
 _write:
 	Purpose:
@@ -67,4 +67,16 @@ _write:
 		- al as the master/slave bit
 	
 	Output:
-		
+		- al, r8d, dx, ebx, rcx and rsi are modified
+
+_flush:
+	Purpose:
+		Flushes the device
+	
+	Input:
+        - rdi as the device port
+        - al as the master/slave bit
+	
+	Output:
+		- al is 1 if everything worked fine; otherwise it will be 0
+		- dx is modified

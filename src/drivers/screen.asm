@@ -136,7 +136,7 @@ Screen:
 				add rbx, 10b
 				inc rsi
 				mov r9, rsi
-				call ._handleScrolling
+				call ._scroll
 				mov rsi, r9
 				mov r8, rbx
 				call ._setCursor	
@@ -343,7 +343,7 @@ Screen:
 	;
 	;	Note: hardcoded values can be used only for this resolution (80 * 25)
 	;
-	._handleScrolling:
+	._scroll:
 		;
 		;	If the cursor is within the screen we getting out
 		;
@@ -374,7 +374,7 @@ Screen:
 	;
 	;		- di equals to maximum colomns of the screen * 2
 	;
-	._eraseBackwards:
+	._eraseCell:
 		xor rbx, rbx
 		xor rax, rax
 		call ._getCursor
@@ -387,27 +387,27 @@ Screen:
 		shl di, 1
 		div di
 		cmp dx, .MAX_COLS * 2 - 2
-		je ._eraseBackwardsPrevLineIf
+		je ._eraseCellPrevLineIf
 		
-		._eraseBackwardsPrevLineElse:
+		._eraseCellPrevLineElse:
 			mov al, 32	
 			mov [.VIDEO_ADDRESS + rbx], al
 			call ._setCursor
 			ret
 
-		._eraseBackwardsPrevLineIf:
+		._eraseCellPrevLineIf:
 			mov al, [.VIDEO_ADDRESS + rbx]
 			cmp al, 32
-			jne ._eraseBackwardsPrevLineElse
+			jne ._eraseCellPrevLineElse
 
-			._eraseBackwardsCycle:
+			._eraseCellCycle:
 				mov al, [.VIDEO_ADDRESS + rbx]
 				cmp al, 32
-				jne ._eraseBackwardsCycleAfter
+				jne ._eraseCellCycleAfter
 				sub bx, 2
-				jmp ._eraseBackwardsCycle
+				jmp ._eraseCellCycle
 
-			._eraseBackwardsCycleAfter:
+			._eraseCellCycleAfter:
 				add rbx, 2
 				call ._setCursor
 				ret

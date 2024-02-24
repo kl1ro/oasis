@@ -1,7 +1,5 @@
 Keyboard:
-	;
-	;	Some useful constants
-	;
+	; Some useful constants
 	.DATAPORT equ 0x60
 	._cOMMANDPORT equ 0x64
 
@@ -15,137 +13,94 @@ Keyboard:
 	;	Output:
 	;		If [SHIFT] is pressed or released:
 	;			- rax is 1 if pressed and 0 if released
-	;
 	;			- dx equals to keyboard data port
 	;
 	;		Else if [Backspace] is pressed:
 	;			If the cursor is on the first character of the screen:
-	;				- rax is modified
-	;
-	;				- rbx is modified
-	;
+	;				- rax and rbx are modified
 	;				- rcx equals to 0
-	;
 	;				- rdx is a number of screen data port
-	;
 	;				- rdi equals to maximum cols * 2
 	;
 	;			Else if the cursor is on one of the rest of the characters:
-	;				- rax is modified
-	;
-	;				- rbx is modified
-	;
+	;				- rax and rbx are modified
 	;				- rdx is a number of screen data port
 	;
 	;		Else:
-	;			- rax is modified
-	;			
-	;			- rbx equals to offset to the place after the last character
-	;             of the string on the screen
-	;
-	;			- rcx is modified
-	;
+	;			- rax, rcx and r8 are modified
+	;			- rbx equals to offset to the place after the last character of the string on the screen
 	;			- dx equals to screen data register port number
-	;
 	;			- rsi point to the end of the string
-	;
 	;			- rdi equals to 0
-	;
-	;			- r8 is modified
-	;
 	;			- r9 equals to rsi
 	;
 	._getKey:
-		;
-		;	First things first read the data stored in the keyboard dataport
-		;
+		; First things first read the data stored in the keyboard dataport
 		xor rax, rax
 		mov dx, .DATAPORT
 		in al, dx
 
-		;
-		;	Then we need to check all of the cases of key codes
-		;
-		;	Escape button
-		;
+		; Then we need to check all of the cases of key codes
+
+		; Escape button
 		cmp al, 1
 		je _break
 
-		;	
-		;	Backspace
-		;
+		; Backspace
 		cmp al, 14
-		je Screen._eraseBackwards
+		je Screen._eraseCell
 			
-		;
-		;	Shift pushed
-		;
+		; Shift pressed
 		cmp al, 54
 		je ._caseShiftPushed
 		cmp al, 42
 		je ._caseShiftPushed
 		
-		;
-		;	Shift released
-		;	
+		; Shift released
 		cmp al, 170
 		je ._caseShiftReleased
 		cmp al, 182
 		je ._caseShiftReleased
 
-		;
-		;	Right pressed
-		;
+		; Right pressed
 		cmp al, 77
 		je Screen._moveCursorRight
 
-		;
-		;	Up pressed
-		;
+		; Up pressed
 		cmp al, 72
 		je Screen._moveCursorUp
 
-		;
-		;	Left pressed
-		;
+		; Left pressed
 		cmp al, 75
 		je Screen._moveCursorLeft
 
-		;
-		;	Down pressed
-		;
+		; Down pressed
 		cmp al, 80
 		je Screen._moveCursorDown
 
-		;
-		;	If the key is released, we just break, except for the shift key.
-		;
+		; If the key is released, we just break
 		cmp al, 80
 		ja _break
 
 		mov bl, [.shiftFlag]
 		test bl, bl
-		jz ._keyboardElseShift
+		jz ._elseShift
 		
-		._keyboardIfShift:
+		._ifShift:
 			mov al, [.keyboardToAsciiTable + rax + 55]	
 			jmp .default
 
-		._keyboardElseShift:
+		._elseShift:
 			mov al, [.keyboardToAsciiTable + rax - 1]
 
-		;
-		;	Default case, in which we just print the key
-		;
+		; Default case, in which we just print the key
 		.default:
 			mov rsi, .buffer
 			mov [rsi], al
 			call Screen._print
 			ret
 
-		;
-		;	Other cases
-		;
+		; Other cases
 		._caseShiftPushed:
 			mov al, 1
 			mov [.shiftFlag], al
@@ -160,22 +115,7 @@ Keyboard:
 		.shiftFlag db 0
 		.buffer times 4 db 0
 
-		;
-		;	This is a counter of characters to read from the keyboard. 
-		;	It is received from user code when it does the sysRead syscall.
-		;
-		.inputCounter db 0
-
-		;
-		;	This is the buffer that is received from user code from sysRead syscall
-		;
-		.inputBuffer db 0
-
-	section .text
-
-		;
-		;	Keyboard codes to ascii convertion table
-		;
+		; Keyboard codes to ascii convertion table
 		.keyboardToAsciiTable: 
 			;
 			;    Esc(1)  1(2)  2(3)  3(4)  4(5)  5(6)  6(7)  7(8)  8(9)  9(10)  0(11)  -(12)  =(13)   Backspace(14)  Tab(15)
@@ -221,3 +161,5 @@ Keyboard:
 			;    ~(42 + 41)  Left Shift(42 + 42)  |(42 + 43)  Z(42 + 44)  X(42 + 45)  C(42 + 46)  V(42 + 47)  B(42 + 48)  N(42 + 49)  M(42 + 50)  <(42 + 51)  >(42 + 52)  ?(42 + 53)
 			;    |           |                    |           |           |           |           |           |           |           |           |           |           |
 			db   126,        0,                   124,        90,         88,         67,         86,         66,         78,         77,         60,         62,         63
+	
+	section .text

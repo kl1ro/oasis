@@ -7,7 +7,7 @@ Dependency of this driver is only this file:
 
 Here's the list of all keyboard driver functions:
 
-1. _getKey
+_getKey:
 	Purpose:
 		Takes the code of the key pushed/released on the keyboard and prints it to the screen.
 	

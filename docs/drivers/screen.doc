@@ -7,7 +7,7 @@ Dependency of this driver is only this file:
 
 Here's a list of all functions that can be used by system to communicate with the screen:
 
-1. _printAt:
+_printAt:
 	Purpose:
 		This function prints a string at the specified colomn and row on the screen
 
@@ -24,7 +24,7 @@ Here's a list of all functions that can be used by system to communicate with th
 		- rsi and r9 point to the end of the string
 		- rdi is modified
 
-2. _getVideomemoryOffset
+_getVideomemoryOffset:
 	Purpose:
 		Calculates the offset in video memory of some row-colomn position on a screen.
 	
@@ -38,7 +38,7 @@ Here's a list of all functions that can be used by system to communicate with th
 		- cl equals to the colomn position from the video memory
 		- dx equals to 0
 
-3. _getCursor
+_getCursor:
 	Purpose:
 		Gets the position of the cursor from the screen and converts
 		this position into the offset from the start of the video memory.
@@ -50,7 +50,7 @@ Here's a list of all functions that can be used by system to communicate with th
 		- ax equals to the offset from video memory
 		- dx equals to the screen data register port number
 
-4. _setCursor
+_setCursor:
 	Purpose:
 		Sets the cursor to the screen by the offset from the start of the video memory.
 
@@ -62,7 +62,7 @@ Here's a list of all functions that can be used by system to communicate with th
 		- bx equals to offset / 2
 		- dx equals to the screen data register port number
 
-5. _print
+_print:
 	Purpose:
 		This is the simplified _printAt function that gives a more convinient
 		way to call it. With this function you don't have to use cx register
@@ -79,7 +79,7 @@ Here's a list of all functions that can be used by system to communicate with th
 		- dx equals to screen data register port number
 		- rsi and r9 point to the end of the string
 
-6. _clearScreen
+_clearScreen:
 	Purpose: 
 		This simply clears the screen and sets the cursor position to (0, 0).
 
@@ -91,7 +91,7 @@ Here's a list of all functions that can be used by system to communicate with th
 		- rbx and rcx are equal to 0
 		- dx equals to screen data register port number
 
-7. _handleScrolling
+_scroll:
 	Purpose: 
 		If offset is more than 0xfa0 then it puts all strings on the screen backwards by 1
 
@@ -105,7 +105,7 @@ Here's a list of all functions that can be used by system to communicate with th
 		- rsi points to the last string on the screen
 		- rdi points to the last string + 1 on the screen
 
-8. _eraseBackwards
+_eraseCell:
 	Purpose: 
 		It deletes the previous character and sets the cursor to that position
 
@@ -124,7 +124,7 @@ Here's a list of all functions that can be used by system to communicate with th
 			- rdx is a number of screen data port
 			- rdi equals to maximum cols * 2
 
-9. _moveCursorRight
+_moveCursorRight:
 	Purpose:
 		This function increments the current cursor position by one.
 
@@ -144,7 +144,7 @@ Here's a list of all functions that can be used by system to communicate with th
 			- di equals to MAX_COLS * 2
 			- bx equals to the cursor offset
 
-10. _moveCursorLeft
+_moveCursorLeft:
 	Purpose:
 		Decrements the current cursor position by one.		
 	
@@ -164,7 +164,7 @@ Here's a list of all functions that can be used by system to communicate with th
 			- di equals to MAX_COLS * 2
 			- bx equals to the cursor offset
 
-11. _moveCursorUp
+_moveCursorUp:
 	Purpose:
 		This function puts the cursor up by one
 
@@ -184,7 +184,7 @@ Here's a list of all functions that can be used by system to communicate with th
 			- bx is modified
 			- di is equal to MAX_COLS * 2
 
-12. _moveCursorDown
+_moveCursorDown:
 	Purpose:
 		This function puts the cursor down by one
 

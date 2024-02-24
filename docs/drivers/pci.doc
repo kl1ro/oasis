@@ -5,3 +5,67 @@ Dependency of this driver is only this file:
 	%include "<Your_path_to_Oasis>/src/drivers/pci.asm"
 
 Here's a list of all functions that can be used by system to communicate with the pci:
+
+_readFromFunction:
+	Purpose:
+		Reads the device function data from PCI controller
+	
+	Input:
+		- ax as the bus number
+		- bx as the device number
+		- cx as the function number
+		- edx as the register offset (needs to be a multiple of 4)
+
+	Output:
+		- eax stores the device function data
+		- bx, cx and edx are modified 
+
+_writeToFunction:
+	Purpose:
+		Writes to the PCI function
+
+	Input:
+		- ax as the bus number
+		- bx as the device number
+		- cx as the function number
+		- edx as the register offset
+		- esi as the value we want to write
+
+	Output:
+		- eax, bx, cx, edx are modified		 
+
+_deviceHasFunctions:
+	Purpose:
+       Checks if the device being connected to the PCI has any function
+    
+	Input:
+		- ax as the bus number
+		- bx as the device number
+
+	Output:
+		- bit 7 of eax is set if the device has any function
+		- bx, cx and edx are modified                
+
+_getId:
+	Purpose:
+    	Converts the bus, device, function and register offset into single number that it stores in eax
+
+	Input:
+		- ax as the bus number
+		- bx as the device number
+		- cx as the function number
+		- edx as the register offset
+
+	Output:
+		- eax stores the function id
+		- bx, cx, edx is modified
+   
+_init:
+	Purpose:
+    	Enumerates the devices connected to the PCI and prints their data to the screen
+    
+	Input:
+		- nothing
+
+	Output:
+		- All registers up to r14 are used

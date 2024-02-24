@@ -5,4 +5,4 @@ which is located in Asmfun, loads them to 0x0 and tells the processor that it ca
 in order to get interrupts running. _loadIDT function defines the gates and puts the information
 about Interrupt Service Routines position into them. These routines are called when the interrupt
 is invoked (maybe it's the key press on the keyboard or one tick of the system clock or, heaven
-forbid, the division by 0). 
+forbid, the division by 0).
