@@ -22,39 +22,20 @@ _startLM:
 	; Iniitialize the ATA
 	call ATA._init
 
-	; Copy message to the sector
-	mov rsi, message
-	mov rdi, sector
-	call _strcpy
+	; Make a line break
+	mov rsi, lineBreak
+	call Screen._print
 
-	; Write the message to the disk
-	mov rsi, sector
-	mov rdi, ATA.port0Base
-	xor ebx, ebx
-	mov al, 0
-	call ATA._write
+	; Initialize the filesystem
+	call Filesystem._init
 
-	; Flush the disk
-	mov rdi, ATA.port0Base
-	mov al, 0
-	call ATA._flush
-
-	; Clear the sector
-	mov rdi, sector
-	mov rcx, 512
-	call _memclrb
-
-	; Read the message from disk
-	mov rsi, ATA.port0Base
-	mov al, 0
-	mov rdi, sector
-	mov rcx, 512
-	xor ebx, ebx
-	call ATA._read
-
-	; Print the message
-	mov rsi, sector
-	mov ah, 0xcf
+	; Print the number of bytes per sector
+	mov rax, [Filesystem.bytesPerSector]
+	mov rdi, buffer
+	mov rcx, 10
+	call _itoa
+	mov rsi, buffer
+	xor ah, ah
 	call Screen._print
 
 	; Chill
@@ -65,6 +46,9 @@ _startLM:
 %include "src/drivers/screen.asm"
 %include "src/drivers/pci.asm"
 %include "src/drivers/ata.asm"
+
+; Filesystem
+%include "src/filesystem.asm"
 
 ; Interrupt handlers
 %include "src/isr/de.asm"
@@ -85,6 +69,7 @@ _startLM:
 
 ; Asmfun-ctions
 %include "../asmfun/64/load-idt.asm"
+%include "../asmfun/64/memcpyb.asm"
 %include "../asmfun/64/memcpyq.asm"
 %include "../asmfun/64/break.asm"
 %include "../asmfun/64/halt.asm"
@@ -102,5 +87,4 @@ _startLM:
 done db "Done!", 10, 0
 lineBreak db 10, 0
 loadingIDT db "Loading IDT... ", 0
-sector times 512 db 0
-message db "This is a message that will be written to the disk", 0
+buffer times 10 db 0

@@ -211,11 +211,20 @@ ATA:
         ret
 
         ._ifATADeviceExists:
+			; Read the boot sector and save it in the filesystem
+			mov rsi, r10
+			xor ebx, ebx
+			mov rdi, Filesystem.buffer
+			mov rcx, 512
+			mov al, r11b
+			call ATA._read
+
             ; Save the deviceExists flag
             inc r12b
 
             ; Print that ata device exists
             mov rsi, .ATADeviceDetectedMessage
+			xor ah, ah
             call Screen._print
 
             ; Print the hex value of the port base
@@ -274,26 +283,6 @@ ATA:
 
         ; Check port 1 Slave
         mov rsi, .port1Base
-        xor al, al
-        call ._checkPort
-
-        ; Check port 2 Master
-        mov rsi, .port2Base
-        mov al, 1
-        call ._checkPort
-
-        ; Check port 2 Slave
-        mov rsi, .port2Base
-        xor al, al
-        call ._checkPort
-
-        ; Check port 3 Master
-        mov rsi, .port3Base
-        mov al, 1
-        call ._checkPort
-
-        ; Check port 3 Slave
-        mov rsi, .port3Base
         xor al, al
         call ._checkPort
 
