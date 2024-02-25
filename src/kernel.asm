@@ -53,7 +53,7 @@ _startLM:
 	mov rcx, 8
 	call _memclrb
 
-	; Print the volume label
+	; Print number of sectors per cluster
 	mov rax, [Filesystem.sectorsPerCluster]
 	mov rdi, buffer
 	mov rcx, 10
